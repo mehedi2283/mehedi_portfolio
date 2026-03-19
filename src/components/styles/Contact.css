@@ -59,6 +59,7 @@ a.contact-social {
   opacity: 0.5;
 }
 
+<<<<<<< HEAD
 .contact-sep {
   opacity: 0.35;
 }
@@ -76,6 +77,8 @@ a.contact-social {
   color: var(--accentColor);
 }
 
+=======
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 @media only screen and (max-width: 1600px) {
   .contact-section h3 {
     font-size: 50px;
@@ -130,6 +133,7 @@ a.contact-social {
   .contact-container {
     width: calc(100% - 25px);
   }
+<<<<<<< HEAD
 
   .contact-box h5 {
     font-size: 15px;
@@ -139,4 +143,6 @@ a.contact-social {
   .contact-admin-link {
     font-size: 11px;
   }
+=======
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 }

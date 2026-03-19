@@ -29,10 +29,17 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
       setData(previewData);
       return;
     }
+<<<<<<< HEAD
     axios.get('http://localhost:5000/api/contact')
       .then(res => { if (res.data?.email) setData({ ...FALLBACK, ...res.data }); })
       .catch(() => {});
   }, [previewData]);
+=======
+    axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/contact')
+      .then(res => { if (res.data?.email) setData({ ...FALLBACK, ...res.data }); })
+      .catch(() => {});
+  }, []);
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
   return (
     <div className="contact-section section-container" id="contact">
@@ -68,10 +75,13 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
             </h2>
             <h5>
               <MdCopyright /> 2026
+<<<<<<< HEAD
               <span className="contact-sep">|</span>
               <a href="/admin" className="contact-admin-link" data-cursor="disable">
                 Admin
               </a>
+=======
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
             </h5>
           </div>
         </div>

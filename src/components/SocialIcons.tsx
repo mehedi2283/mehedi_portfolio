@@ -10,7 +10,11 @@ import { useEffect, useState } from "react";
 import HoverLinks from "./HoverLinks";
 import axios from "axios";
 
+<<<<<<< HEAD
 const API = 'http://localhost:5000/api';
+=======
+const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
 const SocialIcons = () => {
   const [socialLinks, setSocialLinks] = useState({
@@ -19,7 +23,10 @@ const SocialIcons = () => {
     twitter: "https://x.com/mehedihasan",
     instagram: "#",
   });
+<<<<<<< HEAD
   const [resumeUrl, setResumeUrl] = useState("#");
+=======
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
   useEffect(() => {
     axios.get(`${API}/contact`)
@@ -35,6 +42,7 @@ const SocialIcons = () => {
       })
       .catch(() => {});
 
+<<<<<<< HEAD
     // Fetch resume URL from settings
     axios.get(`${API}/settings`)
       .then(res => {
@@ -44,6 +52,8 @@ const SocialIcons = () => {
       })
       .catch(() => {});
 
+=======
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     const social = document.getElementById("social") as HTMLElement;
 
     social.querySelectorAll("span").forEach((item) => {
@@ -113,7 +123,11 @@ const SocialIcons = () => {
           </a>
         </span>
       </div>
+<<<<<<< HEAD
       <a className="resume-button" href={resumeUrl} target="_blank" rel="noopener noreferrer">
+=======
+      <a className="resume-button" href="#">
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
         <HoverLinks text="RESUME" />
         <span>
           <TbNotes />

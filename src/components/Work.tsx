@@ -25,7 +25,11 @@ const Work = ({ previewData }: { previewData?: Project[] }) => {
       setProjects(previewData);
       return;
     }
+<<<<<<< HEAD
     axios.get('http://localhost:5000/api/projects')
+=======
+    axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/projects')
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
       .then(res => setProjects(res.data))
       .catch(() => setProjects([]));
   }, [previewData]);

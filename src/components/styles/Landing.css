@@ -21,8 +21,13 @@
   position: fixed;
   width: 300px;
   height: 300px;
+<<<<<<< HEAD
   background-color: var(--accentColor);
   box-shadow: inset -50px 40px 50px var(--accentColor);
+=======
+  background-color: #22d3ee;
+  box-shadow: inset -50px 40px 50px rgba(0, 180, 180, 0.6);
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   filter: blur(60px);
   border-radius: 50%;
   animation: loadingCircle 5s linear infinite;
@@ -61,8 +66,13 @@
   display: none;
   width: 300px;
   height: 300px;
+<<<<<<< HEAD
   background-color: var(--accentColor);
   box-shadow: inset -50px 40px 50px var(--accentColor);
+=======
+  background-color: #22d3ee;
+  box-shadow: inset -50px 40px 50px rgba(0, 180, 180, 0.6);
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   filter: blur(50px);
   border-radius: 50%;
   animation: loadingCircle2 5s linear infinite;
@@ -94,8 +104,14 @@
   width: 400px;
   height: 400px;
   z-index: 1;
+<<<<<<< HEAD
   background-color: var(--accentColor);
   box-shadow: inset 66px 35px 85px 0px var(--accentColor);
+=======
+  background-color: #22d3ee;
+  transform: translate(-50%, 36%) scaleX(1.4);
+  box-shadow: inset 66px 35px 85px 0px rgba(0, 180, 180, 0.65);
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   filter: blur(50px);
   border-radius: 50%;
   top: 50%;
@@ -233,7 +249,11 @@
 }
 
 h2.landing-info-h2 {
+<<<<<<< HEAD
   color: var(--accentColor);
+=======
+  color: #14b8a6;
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   font-size: 42px;
   width: 120%;
   margin: 0;

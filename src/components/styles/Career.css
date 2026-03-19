@@ -17,7 +17,11 @@
   line-height: 70px;
   font-weight: 400;
   text-align: center;
+<<<<<<< HEAD
   background: linear-gradient(0deg, var(--accentColor), #ffffff);
+=======
+  background: linear-gradient(0deg, #0d9488, #ffffff);
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -93,7 +97,11 @@
   width: 3px;
   height: 100%;
   background-image: linear-gradient(to top,
+<<<<<<< HEAD
       var(--accentColor) 20%,
+=======
+      #14b8a6 20%,
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
       var(--accentColor) 50%,
       transparent 95%);
   max-height: 0%;
@@ -104,12 +112,21 @@
   bottom: 0;
   left: 50%;
   transform: translate(-50%, 50%);
+<<<<<<< HEAD
   background-color: var(--accentColor);
   width: 10px;
   height: 10px;
   border-radius: 50px;
   box-shadow: 0px 0px 5px 2px var(--accentColor), 0px 0px 15px 8px var(--accentColor),
     0px 0px 110px 20px var(--accentColor);
+=======
+  background-color: #14b8a6;
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  box-shadow: 0px 0px 5px 2px #67e8f9, 0px 0px 15px 8px #5eead4,
+    0px 0px 110px 20px #a5f3fc;
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   animation: timeline 0.8s linear infinite forwards;
 }
 
@@ -120,7 +137,11 @@
   50%,
   70%,
   90% {
+<<<<<<< HEAD
     box-shadow: 0px 0px 5px 2px var(--accentColor);
+=======
+    box-shadow: 0px 0px 5px 2px #67e8f9;
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   }
 
   10%,
@@ -129,19 +150,33 @@
   100%,
   64%,
   80% {
+<<<<<<< HEAD
     box-shadow: 0px 0px 5px 2px var(--accentColor), 0px 0px 15px 5px var(--accentColor),
       0px 0px 110px 20px var(--accentColor);
+=======
+    box-shadow: 0px 0px 5px 2px #67e8f9, 0px 0px 15px 5px #5eead4,
+      0px 0px 110px 20px #a5f3fc;
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   }
 }
 
 @keyframes timeline2 {
   0% {
+<<<<<<< HEAD
     box-shadow: 0px 0px 5px 2px var(--accentColor);
   }
 
   100% {
     box-shadow: 0px 0px 5px 2px var(--accentColor), 0px 0px 15px 5px var(--accentColor),
       0px 0px 110px 20px var(--accentColor);
+=======
+    box-shadow: 0px 0px 5px 2px #67e8f9;
+  }
+
+  100% {
+    box-shadow: 0px 0px 5px 2px #67e8f9, 0px 0px 15px 5px #5eead4,
+      0px 0px 110px 20px #a5f3fc;
+>>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   }
 }
 
