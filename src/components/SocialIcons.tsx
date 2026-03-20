@@ -28,6 +28,21 @@ const SocialIcons = () => {
   });
   const [resumeUrl, setResumeUrl] = useState("#");
 
+  const handleIconMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    el.style.setProperty("--jx", `${x * 8}px`);
+    el.style.setProperty("--jy", `${y * 8}px`);
+  };
+
+  const resetIconJiggle = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    el.style.setProperty("--jx", "0px");
+    el.style.setProperty("--jy", "0px");
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -60,16 +75,44 @@ const SocialIcons = () => {
   return (
     <div className="icons-section">
       <div className="social-icons" aria-label="Social links">
-        <a className="social-link" href={socialLinks.github} target="_blank" rel="noopener noreferrer">
+        <a
+          className="social-link"
+          href={socialLinks.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          onMouseMove={handleIconMove}
+          onMouseLeave={resetIconJiggle}
+        >
           <FaGithub />
         </a>
-        <a className="social-link" href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+        <a
+          className="social-link"
+          href={socialLinks.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          onMouseMove={handleIconMove}
+          onMouseLeave={resetIconJiggle}
+        >
           <FaLinkedinIn />
         </a>
-        <a className="social-link" href={socialLinks.twitter} target="_blank" rel="noopener noreferrer">
+        <a
+          className="social-link"
+          href={socialLinks.twitter}
+          target="_blank"
+          rel="noopener noreferrer"
+          onMouseMove={handleIconMove}
+          onMouseLeave={resetIconJiggle}
+        >
           <FaXTwitter />
         </a>
-        <a className="social-link" href={socialLinks.instagram} target="_blank" rel="noopener noreferrer">
+        <a
+          className="social-link"
+          href={socialLinks.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          onMouseMove={handleIconMove}
+          onMouseLeave={resetIconJiggle}
+        >
           <FaInstagram />
         </a>
       </div>

@@ -41,6 +41,8 @@
 }
 
 .social-link {
+  --jx: 0px;
+  --jy: 0px;
   position: relative;
   z-index: 1;
   width: 50px;
@@ -50,7 +52,8 @@
   place-items: center;
   font-size: 28px;
   color: #eae5ec;
-  transition: color 0.22s ease, transform 0.22s ease;
+  transform: translate3d(var(--jx), var(--jy), 0);
+  transition: color 0.22s ease, transform 0.18s ease, filter 0.22s ease, text-shadow 0.22s ease;
 }
 
 .social-icons:hover .social-link,
@@ -60,7 +63,8 @@
 
 .social-link:hover,
 .social-link:focus-visible {
-  transform: translateY(-1px);
+  filter: drop-shadow(0 0 10px rgba(203, 177, 255, 0.75));
+  text-shadow: 0 0 14px rgba(203, 177, 255, 0.8);
 }
 
 .resume-button {
