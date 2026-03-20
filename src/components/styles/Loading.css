@@ -224,8 +224,8 @@
 }
 
 .loader-title-logo {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: block;
   background-color: #0b1220;
   -webkit-mask: url('/images/mhb_logo.svg') center / contain no-repeat;
@@ -438,6 +438,11 @@
   .loader-title {
     font-size: 16px;
   }
+
+  .loader-title-logo {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 @media only screen and (min-width: 1200px) {
@@ -447,5 +452,10 @@
 
   .loader-title {
     font-size: 18px;
+  }
+
+  .loader-title-logo {
+    width: 28px;
+    height: 28px;
   }
 }
