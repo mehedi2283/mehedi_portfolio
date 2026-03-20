@@ -243,7 +243,7 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
   const { data: settings, setData: setSettings, refresh: refreshSettings } = useSingle<{ resumeUrl: string }>(`${API}/settings`, { resumeUrl: '' });
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewResume, setPreviewResume] = useState<ResumeFile | null>(null);
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; id: string; url: string; isDeleting: boolean }>({ isOpen: false, id: '', url: '', isDeleting: false });
 
   const uploadResume = async () => {
@@ -283,7 +283,7 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
   const confirmDelete = async () => {
     setDeleteModal(prev => ({ ...prev, isDeleting: true }));
     try {
-      if (previewUrl === deleteModal.url) setPreviewUrl(null);
+      if (previewResume?.webViewLink === deleteModal.url) setPreviewResume(null);
       await axios.delete(`${API}/settings/resumes/${deleteModal.id}`);
       showToast('Resume deleted successfully!');
       refreshResumes();
@@ -303,7 +303,7 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
       
       <div className="resume-split-layout">
         {/* Left Side: Upload & List */}
-        <div className={`resume-manage-side custom-scrollbar ${previewUrl ? 'has-preview' : ''}`}>
+        <div className={`resume-manage-side custom-scrollbar ${previewResume ? 'has-preview' : ''}`}>
           
           <div className="item-card padded-card">
             <h3 style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '24px', fontSize: '18px' }}>Upload New Resume</h3>
@@ -349,7 +349,7 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
               <div className="resume-list-container">
                 {resumes.map(r => {
                   const isActive = settings.resumeUrl === r.webViewLink;
-                  const isViewing = previewUrl === r.webViewLink;
+                  const isViewing = previewResume?.id === r.id;
                   return (
                     <div key={r.id} className={`resume-item-row ${isViewing ? 'viewing' : ''}`} style={{ border: `1px solid ${isActive ? '#7c3aed' : 'rgba(255,255,255,0.1)'}` }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -362,7 +362,7 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
                         </div>
                       </div>
                       <div className="resume-actions-row">
-                        <button className="btn-save" style={{ background: isViewing ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid rgba(255,255,255,0.2)' }} onClick={() => setPreviewUrl(isViewing ? null : r.webViewLink)}>{isViewing ? 'Close' : 'Preview'}</button>
+                        <button className="btn-save" style={{ background: isViewing ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid rgba(255,255,255,0.2)' }} onClick={() => setPreviewResume(isViewing ? null : r)}>{isViewing ? 'Close' : 'Preview'}</button>
                         {!isActive && <button className="btn-save" onClick={() => setActive(r.webViewLink)}>Set Active</button>}
                         <button className="btn-cancel" style={{ padding: '8px 16px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '6px', cursor: 'pointer' }} onClick={() => deleteResume(r.id, r.webViewLink)}>Delete</button>
                       </div>
@@ -375,23 +375,23 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
         </div>
 
         {/* Right Side / Modal Base: PDF Preview */}
-        {previewUrl && (
+        {previewResume && (
           <>
             <div className="resume-preview-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
               <div style={{ padding: '16px', background: 'rgba(0,0,0,0.2)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.8)' }}>Live Preview</span>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <a href={previewUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accentColor)', fontSize: '12px', textDecoration: 'none' }}>Open in Drive ↗</a>
-                  <button onClick={() => setPreviewUrl(null)} className="close-preview-mobile" style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '24px', lineHeight: 1, padding: '4px 8px' }}>&times;</button>
+                  <a href={previewResume.webViewLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accentColor)', fontSize: '12px', textDecoration: 'none' }}>Open in Drive ↗</a>
+                  <button onClick={() => setPreviewResume(null)} className="close-preview-mobile" style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '24px', lineHeight: 1, padding: '4px 8px' }}>&times;</button>
                 </div>
               </div>
               <div style={{ flex: 1, position: 'relative' }}>
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)', pointerEvents: 'none' }}>Loading Document...</div>
-                <iframe src={previewUrl.replace('/view', '/preview')} style={{ width: '100%', height: '100%', border: 'none', position: 'relative', zIndex: 1 }} allow="autoplay" />
+                <iframe src={`${API}/settings/resumes/${previewResume.id}/preview`} style={{ width: '100%', height: '100%', border: 'none', position: 'relative', zIndex: 1 }} allow="autoplay" />
               </div>
             </div>
             {/* Modal Overlay for Mobile */}
-            <div className="resume-preview-overlay" onClick={() => setPreviewUrl(null)} />
+            <div className="resume-preview-overlay" onClick={() => setPreviewResume(null)} />
           </>
         )}
       </div>
