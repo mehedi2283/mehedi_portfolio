@@ -74,7 +74,7 @@ const SocialIcons = () => {
 
   return (
     <div className="icons-section">
-      <div className="social-icons" aria-label="Social links">
+      <div className="social-icons" data-cursor="icons" aria-label="Social links">
         <a
           className="social-link"
           href={socialLinks.github}

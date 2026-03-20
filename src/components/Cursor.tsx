@@ -6,6 +6,7 @@ const Cursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let hover = false;
+    let mergeTimer: ReturnType<typeof setTimeout> | null = null;
     const cursor = cursorRef.current!;
     const mousePos = { x: 0, y: 0 };
     const cursorPos = { x: 0, y: 0 };
@@ -30,7 +31,11 @@ const Cursor = () => {
         const rect = target.getBoundingClientRect();
 
         if (element.dataset.cursor === "icons") {
-          cursor.classList.add("cursor-icons");
+          cursor.classList.add("cursor-icons", "cursor-merge");
+          if (mergeTimer) clearTimeout(mergeTimer);
+          mergeTimer = setTimeout(() => {
+            cursor.classList.remove("cursor-merge");
+          }, 260);
 
           // Start from the real entry point, then expand/move to the full icons rail.
           gsap.set(cursor, { x: e.clientX, y: e.clientY });
@@ -51,10 +56,15 @@ const Cursor = () => {
         }
       });
       element.addEventListener("mouseleave", () => {
-        cursor.classList.remove("cursor-disable", "cursor-icons");
+        if (mergeTimer) clearTimeout(mergeTimer);
+        cursor.classList.remove("cursor-disable", "cursor-icons", "cursor-merge");
         hover = false;
       });
     });
+
+    return () => {
+      if (mergeTimer) clearTimeout(mergeTimer);
+    };
   }, []);
 
   return <div className="cursor-main" ref={cursorRef}></div>;
