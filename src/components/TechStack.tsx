@@ -21,8 +21,6 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
   const [techItems, setTechItems] = useState<TechItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [accentColor, setAccentColor] = useState("#5eead4");
-  const [isLowQuality, setIsLowQuality] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     axios
@@ -70,20 +68,6 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [previewData]);
 
-  useEffect(() => {
-    const evaluateQuality = () => {
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const smallScreen = window.innerWidth < 900;
-      const cores = navigator.hardwareConcurrency || 8;
-      const memory = Number((navigator as any).deviceMemory || 8);
-      setIsLowQuality(prefersReducedMotion || smallScreen || cores <= 4 || memory <= 4);
-    };
-
-    evaluateQuality();
-    window.addEventListener("resize", evaluateQuality);
-    return () => window.removeEventListener("resize", evaluateQuality);
-  }, []);
-
   const sortedItems = useMemo(() => {
     const score = (item: TechItem) => {
       if (item.category === "automation" && item.highlighted) return 0;
@@ -125,7 +109,8 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
     }));
   }, [entries]);
 
-  const enablePostFx = !isLowQuality && hasInteracted;
+  const isLowQuality = false;
+  const enablePostFx = true;
 
   if (loading) return null;
 
@@ -134,31 +119,29 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
       {!previewData && <h2> My Techstack</h2>}
 
       <Canvas
-        shadows={!isLowQuality}
+        shadows
         gl={{
           alpha: true,
           stencil: false,
           depth: false,
-          antialias: !isLowQuality,
-          powerPreference: isLowQuality ? "low-power" : "high-performance",
+          antialias: true,
+          powerPreference: "high-performance",
         }}
-        dpr={isLowQuality ? [1, 1.25] : [1, 2]}
+        dpr={[1, 2]}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
-        onPointerMove={() => setHasInteracted(true)}
-        onPointerDown={() => setHasInteracted(true)}
         className="tech-canvas"
       >
-        <ambientLight intensity={isLowQuality ? 0.85 : 1} />
+        <ambientLight intensity={1} />
         <spotLight
           position={[20, 20, 25]}
           penumbra={1}
           angle={0.2}
           color="white"
-          castShadow={!isLowQuality}
-          shadow-mapSize={isLowQuality ? [256, 256] : [512, 512]}
+          castShadow
+          shadow-mapSize={[512, 512]}
         />
-        <directionalLight position={[0, 5, -4]} intensity={isLowQuality ? 1.5 : 2} />
+        <directionalLight position={[0, 5, -4]} intensity={2} />
 
         <Suspense fallback={null}>
           <TechStackPhysicsScene
@@ -170,11 +153,9 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
           />
         </Suspense>
 
-        {!isLowQuality && (
-          <Suspense fallback={null}>
-            <TechStackEnvironment lowQuality={isLowQuality} />
-          </Suspense>
-        )}
+        <Suspense fallback={null}>
+          <TechStackEnvironment lowQuality={isLowQuality} />
+        </Suspense>
 
         {enablePostFx && (
           <Suspense fallback={null}>
