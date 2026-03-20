@@ -56,7 +56,12 @@ const Navbar = () => {
           className="navbar-connect"
           data-cursor="disable"
         >
-          mehedihasan123456789.mh.mh@gmail.com
+          <span className="navbar-connect-text">
+            <span className="navbar-connect-text-in">
+              mehedihasan123456789.mh.mh@gmail.com
+              <span aria-hidden="true">mehedihasan123456789.mh.mh@gmail.com</span>
+            </span>
+          </span>
         </a>
         <ul>
           <li>

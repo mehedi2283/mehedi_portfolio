@@ -41,6 +41,30 @@
   letter-spacing: 1px;
   font-weight: 500;
 }
+
+.navbar-connect-text {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.navbar-connect-text-in {
+  position: relative;
+  display: inline-flex;
+  transition: transform 0.3s ease;
+}
+
+.navbar-connect-text-in > span {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: var(--accentColor);
+}
+
+.navbar-connect:hover .navbar-connect-text-in {
+  transform: translateY(-100%);
+}
 .navbar-title {
   display: inline-flex;
   align-items: center;
