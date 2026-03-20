@@ -3,15 +3,11 @@ import { RGBELoader } from "three-stdlib";
 import { gsap } from "gsap";
 
 const setLighting = (scene: THREE.Scene) => {
-<<<<<<< HEAD
   // Read accent color from CSS variable
   const accentHex = getComputedStyle(document.documentElement).getPropertyValue('--accentColor').trim() || '#5eead4';
   const accentColor = new THREE.Color(accentHex);
 
   const directionalLight = new THREE.DirectionalLight(accentColor, 0);
-=======
-  const directionalLight = new THREE.DirectionalLight(0x5eead4, 0);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   directionalLight.intensity = 0;
   directionalLight.position.set(-0.47, -0.32, -1);
   directionalLight.castShadow = true;
@@ -21,11 +17,7 @@ const setLighting = (scene: THREE.Scene) => {
   directionalLight.shadow.camera.far = 50;
   scene.add(directionalLight);
 
-<<<<<<< HEAD
   const pointLight = new THREE.PointLight(accentColor, 0, 100, 3);
-=======
-  const pointLight = new THREE.PointLight(0x22d3ee, 0, 100, 3);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   pointLight.position.set(3, 12, 4);
   pointLight.castShadow = true;
   scene.add(pointLight);

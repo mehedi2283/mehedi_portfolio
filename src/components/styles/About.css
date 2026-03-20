@@ -30,7 +30,6 @@
   letter-spacing: 1px;
 }
 
-<<<<<<< HEAD
 @media only screen and (max-width: 900px) {
   .about-section {
     width: calc(100% - 24px);
@@ -76,8 +75,6 @@
   }
 }
 
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 @media only screen and (min-width: 600px) {
   .about-section {
     justify-content: center;

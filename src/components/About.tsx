@@ -12,17 +12,10 @@ const About = ({ previewBio }: { previewBio?: string }) => {
       setBio(previewBio);
       return;
     }
-<<<<<<< HEAD
     axios.get('http://localhost:5000/api/about')
       .then(res => { if (res.data?.bio) setBio(res.data.bio); })
       .catch(() => {});
   }, [previewBio]);
-=======
-    axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/about')
-      .then(res => { if (res.data?.bio) setBio(res.data.bio); })
-      .catch(() => {});
-  }, []);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
   return (
     <div className="about-section" id="about">

@@ -20,11 +20,7 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
     }
     const fetchCareers = async () => {
       try {
-<<<<<<< HEAD
         const res = await axios.get("http://localhost:5000/api/career");
-=======
-        const res = await axios.get("https://mehedi-portfolio-server-phi.vercel.app/api/career");
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
         setCareers(res.data);
       } catch (err) {
         console.error("Error fetching career history:", err);

@@ -379,7 +379,6 @@
     place-items: inherit;
     align-items: start;
     justify-content: left;
-<<<<<<< HEAD
     width: calc(100% - 20px);
     margin: 0 8px;
     padding: 24px 0 28px;
@@ -435,13 +434,6 @@
   .what-border1 svg {
     width: 100%;
   }
-=======
-  }
-  .what-box {
-    max-width: calc(100% - 25px);
-    margin: 0;
-  }
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 }
 @media only screen and (min-width: 1950px) {
   .what-box h2 {

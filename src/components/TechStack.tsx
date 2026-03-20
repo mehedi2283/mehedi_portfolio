@@ -15,23 +15,20 @@ import {
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 const instanceTextureLoader = new THREE.TextureLoader();
 
-<<<<<<< HEAD
-export type TechItem = { _id?: string; name: string; imageUrl: string; category: "automation" | "extra"; highlighted?: boolean; };
-=======
-export type TechItem = { _id?: string; name: string; imageUrl: string; category: "automation" | "extra"; order: number; };
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
+export type TechItem = {
+  _id?: string;
+  name: string;
+  imageUrl: string;
+  category: "automation" | "extra";
+  highlighted?: boolean;
+};
 
-function RotatingBall({ scale, geometry, material }: { scale: number, geometry: any, material: any }) {
+function RotatingBall({ scale, geometry, material }: { scale: number; geometry: any; material: any }) {
   const meshRef = useRef<THREE.Mesh>(null);
   useFrame((_state, delta) => {
     if (meshRef.current) {
-<<<<<<< HEAD
       meshRef.current.rotation.y += delta * 1.15;
       meshRef.current.rotation.x += delta * 0.42;
-=======
-      meshRef.current.rotation.y += delta * 0.5;
-      meshRef.current.rotation.x += delta * 0.2;
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     }
   });
   return (
@@ -45,35 +42,34 @@ function RotatingBall({ scale, geometry, material }: { scale: number, geometry: 
   );
 }
 
-<<<<<<< HEAD
-export function SingleTechBall({ imageUrl, scale = 1, highlighted = false }: { imageUrl: string, scale?: number, highlighted?: boolean }) {
+export function SingleTechBall({ imageUrl, scale = 1, highlighted = false }: { imageUrl: string; scale?: number; highlighted?: boolean }) {
   const texture = useMemo(() => instanceTextureLoader.load(imageUrl), [imageUrl]);
   const accentColor = useMemo(() => {
     if (typeof window === "undefined") return "#5eead4";
     const c = getComputedStyle(document.documentElement).getPropertyValue("--accentColor").trim();
     return c || "#5eead4";
   }, []);
-  const material = useMemo(() => new THREE.MeshPhysicalMaterial({
-    map: texture,
-    emissive: highlighted ? accentColor : "#ffffff",
-    emissiveMap: texture,
-    emissiveIntensity: highlighted ? 0.6 : 0.3,
-    metalness: 0.62,
-    roughness: 0.38,
-    clearcoat: 0.82,
-    clearcoatRoughness: 0.18,
-    envMapIntensity: 1.1,
-    transparent: true,
-    alphaTest: 0.05,
-  }), [texture, highlighted, accentColor]);
+
+  const material = useMemo(
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        map: texture,
+        emissive: highlighted ? accentColor : "#ffffff",
+        emissiveMap: texture,
+        emissiveIntensity: highlighted ? 0.6 : 0.3,
+        metalness: 0.62,
+        roughness: 0.38,
+        clearcoat: 0.82,
+        clearcoatRoughness: 0.18,
+        envMapIntensity: 1.1,
+        transparent: true,
+        alphaTest: 0.05,
+      }),
+    [texture, highlighted, accentColor]
+  );
 
   return (
-    <div style={{ 
-      width: '100%', 
-      height: '100%', 
-      minWidth: '100px', 
-      minHeight: '100px'
-    }}>
+    <div style={{ width: "100%", height: "100%", minWidth: "100px", minHeight: "100px" }}>
       <Canvas
         camera={{ position: [0, 0, 3.5], fov: 35 }}
         gl={{ alpha: true, antialias: true }}
@@ -82,34 +78,8 @@ export function SingleTechBall({ imageUrl, scale = 1, highlighted = false }: { i
         <ambientLight intensity={0.9} />
         <spotLight position={[4.5, 4.5, 5]} intensity={highlighted ? 2.1 : 1.7} angle={0.34} penumbra={0.85} />
         <directionalLight position={[-3, 2, 4]} intensity={0.75} />
-        <Environment
-          files="/models/char_enviorment.hdr"
-          environmentIntensity={0.8}
-          environmentRotation={[0, 4, 2]}
-        />
+        <Environment files="/models/char_enviorment.hdr" environmentIntensity={0.8} environmentRotation={[0, 4, 2]} />
         <RotatingBall scale={0.9 * scale} geometry={sphereGeometry} material={material} />
-=======
-export function SingleTechBall({ imageUrl, scale = 1 }: { imageUrl: string, scale?: number }) {
-  const texture = useMemo(() => instanceTextureLoader.load(imageUrl), [imageUrl]);
-  const material = useMemo(() => new THREE.MeshPhysicalMaterial({
-    map: texture,
-    emissive: "#ffffff",
-    emissiveMap: texture,
-    emissiveIntensity: 0.3,
-    metalness: 0.5,
-    roughness: 1,
-    clearcoat: 0.1,
-    transparent: true,
-    alphaTest: 0.05,
-  }), [texture]);
-
-  return (
-    <div style={{ width: '100%', height: '100%', minWidth: '100px', minHeight: '100px' }}>
-      <Canvas camera={{ position: [0, 0, 3.5], fov: 35 }} gl={{ alpha: true }}>
-        <ambientLight intensity={1.5} />
-        <pointLight position={[5, 5, 5]} intensity={1.5} />
-        <RotatingBall scale={scale * 0.9} geometry={sphereGeometry} material={material} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
       </Canvas>
     </div>
   );
@@ -117,20 +87,16 @@ export function SingleTechBall({ imageUrl, scale = 1 }: { imageUrl: string, scal
 
 const textureLoader = instanceTextureLoader;
 
-
 type SphereProps = {
   vec?: THREE.Vector3;
   scale: number;
   r?: typeof THREE.MathUtils.randFloatSpread;
   material: THREE.MeshPhysicalMaterial;
   isActive: boolean;
-<<<<<<< HEAD
   highlighted?: boolean;
   accentColor?: string;
   useSoftBreathing?: boolean;
   prioritizeFront?: boolean;
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 };
 
 function SphereGeo({
@@ -139,7 +105,6 @@ function SphereGeo({
   r = THREE.MathUtils.randFloatSpread,
   material,
   isActive,
-<<<<<<< HEAD
   highlighted = false,
   accentColor = "#5eead4",
   useSoftBreathing = false,
@@ -157,7 +122,6 @@ function SphereGeo({
 
     if (highlighted) {
       if (useSoftBreathing) {
-        // Homepage: keep a pale base but make the accent breath clearly visible.
         const t = (Math.sin(state.clock.elapsedTime * 1.6) + 1) * 0.5;
         pulse.copy(white).lerp(accent, 0.42 + t * 0.34);
         tint.copy(white).lerp(accent, 0.2 + t * 0.22);
@@ -165,35 +129,19 @@ function SphereGeo({
         material.emissive.copy(pulse);
         material.emissiveIntensity = 0.46 + t * 0.34;
       } else {
-        // Preview/admin: preserve stronger accent pulse currently used there.
         material.emissive.set(accentColor);
         material.emissiveIntensity = 0.42 + (Math.sin(state.clock.elapsedTime * 2.15) + 1) * 0.14;
       }
 
       if (prioritizeFront) {
-        // Keep the highlighted sphere closer to camera when balls cluster.
         api.current?.applyImpulse(new THREE.Vector3(0, 0, 30 * delta * scale), true);
       }
     }
 
-=======
-}: SphereProps) {
-  const api = useRef<RapierRigidBody | null>(null);
-
-  useFrame((_state, delta) => {
-    if (!isActive) return;
-    delta = Math.min(0.1, delta);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     const impulse = vec
       .copy(api.current!.translation())
       .normalize()
-      .multiply(
-        new THREE.Vector3(
-          -50 * delta * scale,
-          -150 * delta * scale,
-          -50 * delta * scale
-        )
-      );
+      .multiply(new THREE.Vector3(-50 * delta * scale, -150 * delta * scale, -50 * delta * scale));
 
     api.current?.applyImpulse(impulse, true);
   });
@@ -203,32 +151,13 @@ function SphereGeo({
       linearDamping={0.75}
       angularDamping={0.15}
       friction={0.2}
-<<<<<<< HEAD
-      position={
-        highlighted && prioritizeFront
-          ? [r(14), r(14) - 22, 8 + r(4)]
-          : [r(20), r(20) - 25, r(20) - 10]
-      }
-=======
-      position={[r(20), r(20) - 25, r(20) - 10]}
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
+      position={highlighted && prioritizeFront ? [r(14), r(14) - 22, 8 + r(4)] : [r(20), r(20) - 25, r(20) - 10]}
       ref={api}
       colliders={false}
     >
       <BallCollider args={[scale]} />
-      <CylinderCollider
-        rotation={[Math.PI / 2, 0, 0]}
-        position={[0, 0, 1.2 * scale]}
-        args={[0.15 * scale, 0.275 * scale]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        scale={scale}
-        geometry={sphereGeometry}
-        material={material}
-        rotation={[0.3, 1, 1]}
-      />
+      <CylinderCollider rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 1.2 * scale]} args={[0.15 * scale, 0.275 * scale]} />
+      <mesh castShadow receiveShadow scale={scale} geometry={sphereGeometry} material={material} rotation={[0.3, 1, 1]} />
     </RigidBody>
   );
 }
@@ -243,24 +172,12 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
 
   useFrame(({ pointer, viewport }) => {
     if (!isActive) return;
-    const targetVec = vec.lerp(
-      new THREE.Vector3(
-        (pointer.x * viewport.width) / 2,
-        (pointer.y * viewport.height) / 2,
-        0
-      ),
-      0.2
-    );
+    const targetVec = vec.lerp(new THREE.Vector3((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0), 0.2);
     ref.current?.setNextKinematicTranslation(targetVec);
   });
 
   return (
-    <RigidBody
-      position={[100, 100, 100]}
-      type="kinematicPosition"
-      colliders={false}
-      ref={ref}
-    >
+    <RigidBody position={[100, 100, 100]} type="kinematicPosition" colliders={false} ref={ref}>
       <BallCollider args={[2]} />
     </RigidBody>
   );
@@ -270,14 +187,12 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
   const [isActive, setIsActive] = useState(false);
   const [techItems, setTechItems] = useState<TechItem[]>([]);
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
+
   const accentColor = useMemo(() => {
     if (typeof window === "undefined") return "#5eead4";
     const c = getComputedStyle(document.documentElement).getPropertyValue("--accentColor").trim();
     return c || "#5eead4";
   }, []);
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
   useEffect(() => {
     if (previewData) {
@@ -286,12 +201,10 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
       setIsActive(true);
       return;
     }
-<<<<<<< HEAD
-    axios.get("http://localhost:5000/api/techstack")
-=======
-    axios.get("https://mehedi-portfolio-server-phi.vercel.app/api/techstack")
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
-      .then(res => {
+
+    axios
+      .get("http://localhost:5000/api/techstack")
+      .then((res) => {
         setTechItems(res.data);
         setLoading(false);
       })
@@ -299,14 +212,10 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
         setTechItems([]);
         setLoading(false);
       });
-<<<<<<< HEAD
   }, [previewData]);
-=======
-  }, []);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
   useEffect(() => {
-    if (previewData) return; // Always active in preview
+    if (previewData) return;
 
     const handleScroll = () => {
       const workElem = document.getElementById("work");
@@ -314,11 +223,10 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
       const threshold = workElem.getBoundingClientRect().top;
       setIsActive(window.scrollY > threshold);
     };
-    // ... rest of the scroll logic if needed ...
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [previewData]);
-<<<<<<< HEAD
 
   const sortedItems = useMemo(() => {
     const score = (item: TechItem) => {
@@ -336,7 +244,7 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
   }, [techItems]);
 
   const entries = useMemo(() => {
-    return sortedItems.map(item => {
+    return sortedItems.map((item) => {
       const texture = textureLoader.load(item.imageUrl);
       const highlighted = Boolean(item.highlighted);
       const material = new THREE.MeshPhysicalMaterial({
@@ -354,66 +262,12 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
 
   const spheres = useMemo(() => {
     if (entries.length === 0) return [];
-    const result: Array<{ scale: number; material: THREE.MeshPhysicalMaterial; highlighted: boolean; }> = [];
-
-    entries.forEach(({ item, material, highlighted }) => {
-      const baseScale = item.category === 'automation' ? 1 : 0.65;
-      result.push({
-        scale: baseScale,
-        material,
-        highlighted,
-      });
-    });
-
-    return result;
+    return entries.map(({ item, material, highlighted }) => ({
+      scale: item.category === "automation" ? 1 : 0.65,
+      material,
+      highlighted,
+    }));
   }, [entries]);
-=======
-  const automationItems = useMemo(() => techItems.filter(t => t.category === "automation"), [techItems]);
-  const extraItems      = useMemo(() => techItems.filter(t => t.category === "extra"), [techItems]);
-
-  const automationMaterials = useMemo(() => {
-    return automationItems.map(item => {
-      const texture = textureLoader.load(item.imageUrl);
-      return new THREE.MeshPhysicalMaterial({
-        map: texture,
-        emissive: "#ffffff",
-        emissiveMap: texture,
-        emissiveIntensity: 0.3,
-        metalness: 0.5,
-        roughness: 1,
-        clearcoat: 0.1,
-      });
-    });
-  }, [automationItems]);
-
-  const extraMaterials = useMemo(() => {
-    return extraItems.map(item => {
-      const texture = textureLoader.load(item.imageUrl);
-      return new THREE.MeshPhysicalMaterial({
-        map: texture,
-        emissive: "#ffffff",
-        emissiveMap: texture,
-        emissiveIntensity: 0.3,
-        metalness: 0.5,
-        roughness: 1,
-        clearcoat: 0.1,
-      });
-    });
-  }, [extraItems]);
-
-  const spheres = useMemo(() => {
-    if (techItems.length === 0) return [];
-    const autoSpheres = [...Array(22)].map(() => ({
-      scale: [0.9, 1, 1.1, 1.2][Math.floor(Math.random() * 4)],
-      type: 'automation' as const
-    }));
-    const extSpheres = [...Array(10)].map(() => ({
-      scale: [0.5, 0.6, 0.7][Math.floor(Math.random() * 3)],
-      type: 'extra' as const
-    }));
-    return [...autoSpheres, ...extSpheres];
-  }, [techItems]);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
   if (loading) return null;
 
@@ -429,18 +283,10 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
         className="tech-canvas"
       >
         <ambientLight intensity={1} />
-        <spotLight
-          position={[20, 20, 25]}
-          penumbra={1}
-          angle={0.2}
-          color="white"
-          castShadow
-          shadow-mapSize={[512, 512]}
-        />
+        <spotLight position={[20, 20, 25]} penumbra={1} angle={0.2} color="white" castShadow shadow-mapSize={[512, 512]} />
         <directionalLight position={[0, 5, -4]} intensity={2} />
         <Physics gravity={[0, 0, 0]}>
           <Pointer isActive={isActive} />
-<<<<<<< HEAD
           {spheres.map((props, i) => (
             <SphereGeo
               key={i}
@@ -453,25 +299,8 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
               isActive={isActive}
             />
           ))}
-=======
-          {spheres.map((props, i) => {
-            const materialArray = props.type === 'automation' ? automationMaterials : extraMaterials;
-            return (
-              <SphereGeo
-                key={i}
-                {...props}
-                material={materialArray[Math.floor(Math.random() * materialArray.length)]}
-                isActive={isActive}
-              />
-            );
-          })}
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
         </Physics>
-        <Environment
-          files="/models/char_enviorment.hdr"
-          environmentIntensity={0.5}
-          environmentRotation={[0, 4, 2]}
-        />
+        <Environment files="/models/char_enviorment.hdr" environmentIntensity={0.5} environmentRotation={[0, 4, 2]} />
         <EffectComposer enableNormalPass={false}>
           <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
         </EffectComposer>

@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-<<<<<<< HEAD
 import { MdHome, MdMenu, MdChevronLeft, MdChevronRight, MdSettings } from 'react-icons/md';
 import { FiGrid, FiFolder, FiBriefcase, FiUser, FiHome, FiTrendingUp, FiTool, FiMail, FiFileText, FiLogOut } from 'react-icons/fi';
-=======
-import { MdHome } from 'react-icons/md';
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 import './Admin.css';
 import Landing from '../Landing';
 import About from '../About';
@@ -15,21 +11,13 @@ import WhatIDo from '../WhatIDo';
 import TechStack, { SingleTechBall } from '../TechStack';
 import Work from '../Work';
 
-<<<<<<< HEAD
 const API = 'http://localhost:5000/api';
-=======
-const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Career   { _id?: string; title: string; company: string; dateRange: string; description: string; order: number; }
 interface Project  { _id?: string; title: string; category: string; tools: string; image: string; order: number; }
 interface WhatIDo  { _id?: string; title: string; subtitle: string; description: string; tags: string; order: number; }
-<<<<<<< HEAD
 interface TechItem { _id?: string; name: string; imageUrl: string; category: 'automation' | 'extra'; highlighted?: boolean; }
-=======
-interface TechItem { _id?: string; name: string; imageUrl: string; category: 'automation' | 'extra'; order: number; }
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 interface LandingData { firstName: string; lastName: string; role1: string; role2: string; }
 interface AboutData   { bio: string; }
 interface ContactData { email: string; education: string; github: string; linkedin: string; twitter: string; instagram: string; }
@@ -42,7 +30,6 @@ async function processImage(file: File): Promise<Blob> {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-<<<<<<< HEAD
         const outW = 2048;
         const outH = 1024;
         canvas.width = outW;
@@ -87,20 +74,6 @@ async function processImage(file: File): Promise<Blob> {
           ctx.drawImage(img, x, y, w, h);
         }
 
-=======
-        const size = 512;
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return reject(new Error('Canvas context failed'));
-        const scale = (size * 0.8) / Math.max(img.width, img.height);
-        const w = img.width * scale;
-        const h = img.height * scale;
-        const x = (size - w) / 2;
-        const y = (size - h) / 2;
-        ctx.clearRect(0, 0, size, size);
-        ctx.drawImage(img, x, y, w, h);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
         canvas.toBlob(b => b ? resolve(b) : reject('Blob error'), 'image/png');
       };
       img.src = e.target?.result as string;
@@ -110,7 +83,6 @@ async function processImage(file: File): Promise<Blob> {
   });
 }
 
-<<<<<<< HEAD
 type Section = 'overview' | 'projects' | 'career' | 'about' | 'landing' | 'whatido' | 'techstack' | 'contact' | 'resumes' | 'security' | 'settings';
 
 const NAV: { id: Section; label: string; iconId: string }[] = [
@@ -144,22 +116,6 @@ function renderNavIcon(iconId: string) {
   }
 }
 
-=======
-type Section = 'overview' | 'projects' | 'career' | 'about' | 'landing' | 'whatido' | 'techstack' | 'contact' | 'security' | 'settings';
-
-const NAV: { id: Section; label: string; icon: string }[] = [
-  { id: 'overview',  label: 'Overview',   icon: '◈'  },
-  { id: 'projects',  label: 'Projects',   icon: '🗂'  },
-  { id: 'career',    label: 'Career',     icon: '💼'  },
-  { id: 'about',     label: 'About',      icon: '👤'  },
-  { id: 'landing',   label: 'Landing',    icon: '🏠'  },
-  { id: 'whatido',   label: 'What I Do',  icon: '⚙️'  },
-  { id: 'techstack', label: 'Tech Stack', icon: '🔧'  },
-  { id: 'contact',   label: 'Contact',    icon: '📬'  },
-  { id: 'settings',  label: 'Settings',   icon: '⚙️'  },
-];
-
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 function useList<T>(url: string) {
   const [items, setItems] = useState<T[]>([]);
@@ -223,16 +179,10 @@ function PreviewShell({ children, label = 'Live Preview' }: { children: React.Re
           height: '100%', 
           minHeight: '600px',
           overflowY: 'auto',
-<<<<<<< HEAD
           overflowX: 'auto',
           backgroundColor: '#0a0a0f'
         }}>
         <div style={{ minHeight: '100%' }}>
-=======
-          backgroundColor: '#0a0a0f'
-        }}>
-        <div style={{ pointerEvents: 'none', minHeight: '100%' }}>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
           {children}
         </div>
       </div>
@@ -241,7 +191,6 @@ function PreviewShell({ children, label = 'Live Preview' }: { children: React.Re
   );
 }
 
-<<<<<<< HEAD
 function FrontendSectionPreview({ children }: { children: React.ReactNode }) {
   return (
     <div className="frontend-section-preview container-main">
@@ -254,8 +203,6 @@ function FrontendSectionPreview({ children }: { children: React.ReactNode }) {
   );
 }
 
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 // ═══════════════════════════════════════════════════════════════════════════════
 //  OVERVIEW
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -283,7 +230,6 @@ function OverviewPanel() {
 // ═══════════════════════════════════════════════════════════════════════════════
 //  SETTINGS & THEME
 // ═══════════════════════════════════════════════════════════════════════════════
-<<<<<<< HEAD
 interface ResumeFile { id: string; name: string; webViewLink: string; createdTime: string; }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -445,8 +391,6 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
 // ═══════════════════════════════════════════════════════════════════════════════
 //  SETTINGS & THEME
 // ═══════════════════════════════════════════════════════════════════════════════
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 function SettingsPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
   const { data, setData, refresh } = useSingle<SecurityData & { themeColor: string }>(`${API}/settings`, { passkey1: '', passkey2: '', themeColor: '#5eead4' });
   const [isSaving, setIsSaving] = useState(false);
@@ -472,11 +416,7 @@ function SettingsPanel({ showToast }: { showToast: (m: string, t?: 'success' | '
   return (
     <div className="panel">
       <SectionHeader title="Dashboard Settings" subtitle="Manage your dashboard security and global theme" />
-<<<<<<< HEAD
       <div className="item-card padded-card" style={{ maxWidth: '600px' }}>
-=======
-      <div className="item-card" style={{ maxWidth: '600px', padding: '32px' }}>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
         <form className="dash-form" onSubmit={save}>
           <h3 style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '24px', fontSize: '18px' }}>Security Passkeys</h3>
           <div className="form-grid" style={{ gridTemplateColumns: '1fr', gap: '20px' }}>
@@ -598,7 +538,6 @@ function LoginScreen({ onAuth }: { onAuth: () => void }) {
 //  PROJECTS
 // ═══════════════════════════════════════════════════════════════════════════════
 function ProjectPreview({ form, items }: { form: Project, items: Project[] }) {
-<<<<<<< HEAD
   const hasDraft = Boolean(form.title?.trim() || form.category?.trim() || form.tools?.trim() || form.image?.trim());
   const previewItems = hasDraft ? [...items.filter(i => i._id !== form._id), form] : items;
   return (
@@ -606,12 +545,6 @@ function ProjectPreview({ form, items }: { form: Project, items: Project[] }) {
       <FrontendSectionPreview>
         <Work previewData={previewItems} />
       </FrontendSectionPreview>
-=======
-  const previewItems = [...items.filter(i => i._id !== form._id), form];
-  return (
-    <PreviewShell label="Project Carousel Preview">
-      <Work previewData={previewItems} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     </PreviewShell>
   );
 }
@@ -750,7 +683,6 @@ function ProjectsPanel({ showToast }: { showToast: (m: string, t?: 'success' | '
 //  CAREER
 // ═══════════════════════════════════════════════════════════════════════════════
 function CareerPreview({ form, items }: { form: Career, items: Career[] }) {
-<<<<<<< HEAD
   const hasDraft = Boolean(form.title?.trim() || form.company?.trim() || form.dateRange?.trim() || form.description?.trim());
   const previewItems = hasDraft ? [...items.filter(i => i._id !== form._id), form] : items;
   return (
@@ -758,12 +690,6 @@ function CareerPreview({ form, items }: { form: Career, items: Career[] }) {
       <FrontendSectionPreview>
         <Career previewData={previewItems} />
       </FrontendSectionPreview>
-=======
-  const previewItems = [...items.filter(i => i._id !== form._id), form];
-  return (
-    <PreviewShell label="Career Timeline Preview">
-      <Career previewData={previewItems} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     </PreviewShell>
   );
 }
@@ -884,13 +810,9 @@ function CareerPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'er
 function AboutPreview({ bio }: { bio: string }) {
   return (
     <PreviewShell label="About Section Preview">
-<<<<<<< HEAD
       <FrontendSectionPreview>
         <About previewBio={bio} />
       </FrontendSectionPreview>
-=======
-      <About previewBio={bio} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     </PreviewShell>
   );
 }
@@ -936,13 +858,9 @@ function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'err
 function LandingPreview({ data }: { data: LandingData }) {
   return (
     <PreviewShell label="Landing Hero Preview">
-<<<<<<< HEAD
       <FrontendSectionPreview>
         <Landing previewData={data} />
       </FrontendSectionPreview>
-=======
-      <Landing previewData={data} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     </PreviewShell>
   );
 }
@@ -994,7 +912,6 @@ function WhatIDoPreview({ form, items }: { form: WhatIDo, items: WhatIDo[] }) {
     : (form.tags as unknown as string[]) || [];
 
   const previewForm = { ...form, tags: tagsList as any };
-<<<<<<< HEAD
   const hasDraft = Boolean(form.title?.trim() || form.subtitle?.trim() || form.description?.trim() || tagsList.length > 0);
   const previewItems = hasDraft ? [...items.filter(i => i._id !== form._id), previewForm] : items;
 
@@ -1003,15 +920,6 @@ function WhatIDoPreview({ form, items }: { form: WhatIDo, items: WhatIDo[] }) {
       <FrontendSectionPreview>
         <WhatIDo previewData={previewItems} />
       </FrontendSectionPreview>
-=======
-  const previewItems = [...items.filter(i => i._id !== form._id), previewForm];
-
-  return (
-    <PreviewShell label="Service Card Preview">
-      <div style={{ minWidth: '1400px', transform: 'scale(0.75)', transformOrigin: 'top left', height: '800px' }}>
-        <WhatIDo previewData={previewItems} />
-      </div>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     </PreviewShell>
   );
 }
@@ -1137,18 +1045,13 @@ function WhatIDoPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
 
 function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
   const { items, refresh } = useList<TechItem>(`${API}/techstack`);
-<<<<<<< HEAD
   const empty: TechItem = { name: '', imageUrl: '', category: 'automation', highlighted: false };
-=======
-  const empty: TechItem = { name: '', imageUrl: '', category: 'automation', order: 0 };
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   const [form, setForm] = useState<TechItem>(empty);
   const [editId, setEditId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-<<<<<<< HEAD
   const sortTechItems = (list: TechItem[]) => {
     const score = (item: TechItem) => {
       if (item.category === 'automation' && item.highlighted) return 0;
@@ -1164,8 +1067,6 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
     });
   };
 
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [subTab, setSubTab] = useState<'manage'|'preview'>('manage');
   const submit = async (e: React.FormEvent) => {
@@ -1180,16 +1081,12 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
         const res = await axios.post('https://api.imgbb.com/1/upload?key=0dfba9f982c03fb77410bf4d22445cfd', formData);
         finalImageUrl = res.data.data.url;
       }
-<<<<<<< HEAD
       const payload = {
         name: form.name,
         imageUrl: finalImageUrl,
         category: form.category,
         highlighted: Boolean(form.highlighted),
       };
-=======
-      const payload = { ...form, imageUrl: finalImageUrl };
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
 
       if (editId) await axios.put(`${API}/techstack/${editId}`, payload);
       else await axios.post(`${API}/techstack`, payload);
@@ -1199,11 +1096,7 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
     setIsUploading(false);
   };
 
-<<<<<<< HEAD
   const edit = (item: TechItem) => { setForm({ ...item, highlighted: Boolean(item.highlighted), _id: undefined }); setEditId(item._id!); setSelectedFile(null); setShowForm(true); };
-=======
-  const edit = (item: TechItem) => { setForm({ ...item, _id: undefined }); setEditId(item._id!); setSelectedFile(null); setShowForm(true); };
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   const del = (id: string) => setDeleteId(id);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1247,7 +1140,6 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
                   <option value="extra">Extra (small sphere)</option>
                 </select>
               </label>
-<<<<<<< HEAD
               <label>
                 Highlight on Frontend
                 <select value={form.highlighted ? 'yes' : 'no'} onChange={e => setForm({...form, highlighted: e.target.value === 'yes'})}>
@@ -1255,9 +1147,6 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
                   <option value="yes">Yes (Standout Ball)</option>
                 </select>
               </label>
-=======
-              <label>Display Order<input type="number" value={form.order} onChange={e => setForm({...form, order: +e.target.value})} /></label>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
             </div>
             <div className="form-actions">
               <button type="submit" className="btn-save" disabled={isUploading}>{isUploading ? 'Uploading...' : editId ? 'Update' : 'Add'}</button>
@@ -1270,25 +1159,15 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
       )}
 
       <div className="tech-grid">
-<<<<<<< HEAD
         {sortTechItems(items).map(item => (
           <div key={item._id} className="tech-card">
             <div className={`tech-ball-wrap ${item.category === 'extra' ? 'small' : ''}`}>
               <SingleTechBall imageUrl={item.imageUrl} highlighted={Boolean(item.highlighted)} scale={item.category === 'automation' ? 1.2 : 0.8} />
-=======
-        {items.map(item => (
-          <div key={item._id} className="tech-card">
-            <div className="tech-ball-wrap">
-              <SingleTechBall imageUrl={item.imageUrl} scale={item.category === 'automation' ? 1.2 : 0.8} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
             </div>
             <div className="tech-info">
               <span className="tech-name">{item.name}</span>
               <span className={`tech-cat ${item.category}`}>{item.category}</span>
-<<<<<<< HEAD
               {item.highlighted && <span className="tech-cat highlight">highlighted</span>}
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
             </div>
             <div className="item-actions">
               <button className="btn-edit" onClick={() => edit(item)}>Edit</button>
@@ -1319,7 +1198,6 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
       {subTab === 'preview' && (
         <div className="preview-tab-content" style={{ height: '800px', position: 'relative', overflow: 'hidden' }}>
           <PreviewShell label="3D Tech Stack Preview">
-<<<<<<< HEAD
             <FrontendSectionPreview>
               <TechStack previewData={
                 (form.name?.trim() || form.imageUrl?.trim())
@@ -1327,9 +1205,6 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
                   : sortTechItems(items)
               } />
             </FrontendSectionPreview>
-=======
-            <TechStack previewData={[...items.filter(i => i._id !== form._id), form]} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
           </PreviewShell>
         </div>
       )}
@@ -1343,13 +1218,9 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
 function ContactPreview({ data }: { data: ContactData }) {
   return (
     <PreviewShell label="Contact Section Preview">
-<<<<<<< HEAD
       <FrontendSectionPreview>
         <Contact previewData={data} />
       </FrontendSectionPreview>
-=======
-      <Contact previewData={data} />
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
     </PreviewShell>
   );
 }
@@ -1401,11 +1272,7 @@ function ContactPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
 const Dashboard = () => {
   const [active, setActive] = useState<Section>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-<<<<<<< HEAD
   const [isAuthenticated, setIsAuthenticated] = useState(true);
-=======
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
   const { toast, show: showToast } = useToast();
 
   const renderPanel = () => {
@@ -1418,10 +1285,7 @@ const Dashboard = () => {
       case 'whatido':   return <WhatIDoPanel   showToast={showToast} />;
       case 'techstack': return <TechStackPanel showToast={showToast} />;
       case 'contact':   return <ContactPanel   showToast={showToast} />;
-<<<<<<< HEAD
       case 'resumes':   return <ResumesPanel   showToast={showToast} />;
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
       case 'settings':  return <SettingsPanel  showToast={showToast} />;
       default: return null;
     }
@@ -1431,7 +1295,6 @@ const Dashboard = () => {
 
   return (
     <div className="dash-root">
-<<<<<<< HEAD
       {/* Mobile Sidebar Overlay */}
       <div 
         className={`sidebar-overlay ${sidebarOpen ? 'show' : ''}`} 
@@ -1462,23 +1325,11 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-=======
-      {/* Sidebar */}
-      <aside className={`dash-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
-        <div className="sidebar-logo">
-          <span className="logo-icon">◈</span>
-          {sidebarOpen && <span className="logo-text">Portfolio<strong>CMS</strong></span>}
-        </div>
-        <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? '◀' : '▶'}
-        </button>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
         <nav className="sidebar-nav">
           {NAV.map(n => (
             <button
               key={n.id}
               className={`nav-item ${active === n.id ? 'nav-active' : ''}`}
-<<<<<<< HEAD
               onClick={() => {
                 setActive(n.id);
                 if (window.innerWidth <= 768) setSidebarOpen(false);
@@ -1486,35 +1337,18 @@ const Dashboard = () => {
               title={!sidebarOpen ? n.label : undefined}
             >
               <span className="nav-icon">{renderNavIcon(n.iconId)}</span>
-=======
-              onClick={() => setActive(n.id)}
-              title={!sidebarOpen ? n.label : undefined}
-            >
-              <span className="nav-icon">{n.icon}</span>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
               {sidebarOpen && <span className="nav-label">{n.label}</span>}
             </button>
           ))}
         </nav>
-<<<<<<< HEAD
-=======
-        {sidebarOpen && (
-          <div className="sidebar-footer">
-            <a href="/" target="_blank" className="view-site-btn">View Site ↗</a>
-          </div>
-        )}
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
       </aside>
 
       {/* Main */}
       <main className="dash-main">
         <header className="dash-topbar">
-<<<<<<< HEAD
           <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
             <MdMenu />
           </button>
-=======
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
           <div className="topbar-breadcrumb">
             <span className="breadcrumb-root">Dashboard</span>
             <span className="breadcrumb-sep">/</span>
@@ -1522,10 +1356,6 @@ const Dashboard = () => {
           </div>
           <div className="topbar-right">
             <span className="server-badge">🟢 Server Live</span>
-<<<<<<< HEAD
-=======
-            <button className="btn-save" style={{ padding: '8px 16px', fontSize: '12px', marginLeft: '16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }} onClick={() => setIsAuthenticated(false)}>Logout</button>
->>>>>>> c5d82efbffcf14aae0061f222722e044f14803b9
           </div>
         </header>
         <div className="dash-content">{renderPanel()}</div>
