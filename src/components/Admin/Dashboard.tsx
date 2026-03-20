@@ -3,7 +3,14 @@ import axios from 'axios';
 import { MdHome, MdMenu, MdChevronLeft, MdChevronRight, MdSettings } from 'react-icons/md';
 import { FiGrid, FiFolder, FiBriefcase, FiUser, FiHome, FiTrendingUp, FiTool, FiMail, FiFileText, FiLogOut } from 'react-icons/fi';
 import './Admin.css';
+import ConfirmModal from './ConfirmModal';
 import Landing from '../Landing';
+import About from '../About';
+import Contact from '../Contact';
+import Career from '../Career';
+import WhatIDo from '../WhatIDo';
+import TechStack, { SingleTechBall } from '../TechStack';
+import Work from '../Work';
 import About from '../About';
 import Contact from '../Contact';
 import Career from '../Career';
@@ -243,6 +250,7 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; id: string; url: string; isDeleting: boolean }>({ isOpen: false, id: '', url: '', isDeleting: false });
 
   const uploadResume = async () => {
     if (!resumeFile) return;
@@ -274,18 +282,24 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
     }
   };
 
-  const deleteResume = async (id: string, url: string) => {
-    if (!window.confirm('Are you sure you want to permanently delete this resume from Google Drive?')) return;
+  const deleteResume = (id: string, url: string) => {
+    setDeleteModal({ isOpen: true, id, url, isDeleting: false });
+  };
+
+  const confirmDelete = async () => {
+    setDeleteModal(prev => ({ ...prev, isDeleting: true }));
     try {
-      if (previewUrl === url) setPreviewUrl(null);
-      await axios.delete(`${API}/settings/resumes/${id}`);
+      if (previewUrl === deleteModal.url) setPreviewUrl(null);
+      await axios.delete(`${API}/settings/resumes/${deleteModal.id}`);
       showToast('Resume deleted successfully!');
       refreshResumes();
-      if (settings.resumeUrl === url) {
+      if (settings.resumeUrl === deleteModal.url) {
         setSettings({ ...settings, resumeUrl: '' });
       }
+      setDeleteModal({ isOpen: false, id: '', url: '', isDeleting: false });
     } catch {
       showToast('Error deleting resume', 'error');
+      setDeleteModal(prev => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -387,6 +401,19 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
           </>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Resume?"
+        message="Are you sure you want to permanently delete this resume from Google Drive? This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteModal({ isOpen: false, id: '', url: '', isDeleting: false })}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={deleteModal.isDeleting}
+        isDangerous={true}
+      />
     </div>
   );
 }
