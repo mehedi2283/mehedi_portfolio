@@ -57,7 +57,7 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
         </h2>
       </div>
       <div className="what-box">
-        <div className="what-box-in">
+        <div className={`what-box-in ${services.length > 2 ? "what-many" : ""}`}>
           <div className="what-border2">
             <svg width="100%">
               <line
