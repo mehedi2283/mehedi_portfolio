@@ -28,16 +28,28 @@ const Cursor = () => {
       element.addEventListener("mouseenter", () => {
 
         if (element.dataset.cursor === "icons") {
-          // Social section has its own rail animation, so hide cursor blob here.
-          cursor.classList.add("cursor-disable");
-          hover = false;
+          const rect = element.getBoundingClientRect();
+          cursor.classList.add("cursor-cover");
+          cursor.style.setProperty("--coverW", `${rect.width}px`);
+          cursor.style.setProperty("--coverH", `${rect.height}px`);
+          cursor.style.setProperty("--coverR", "28px");
+          gsap.to(cursor, {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+            duration: 0.28,
+            ease: "power2.out",
+          });
+          hover = true;
         }
         if (element.dataset.cursor === "disable") {
           cursor.classList.add("cursor-disable");
         }
       });
       element.addEventListener("mouseleave", () => {
-        cursor.classList.remove("cursor-disable", "cursor-icons", "cursor-merge");
+        cursor.classList.remove("cursor-disable", "cursor-icons", "cursor-merge", "cursor-cover");
+        cursor.style.removeProperty("--coverW");
+        cursor.style.removeProperty("--coverH");
+        cursor.style.removeProperty("--coverR");
         hover = false;
       });
     });
