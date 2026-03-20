@@ -25,8 +25,8 @@ const Cursor = () => {
     });
     document.querySelectorAll("[data-cursor]").forEach((item) => {
       const element = item as HTMLElement;
-      element.addEventListener("mouseover", (e: MouseEvent) => {
-        const target = e.currentTarget as HTMLElement;
+      element.addEventListener("mouseenter", () => {
+        const target = element;
         const rect = target.getBoundingClientRect();
 
         if (element.dataset.cursor === "icons") {
@@ -41,7 +41,7 @@ const Cursor = () => {
           cursor.classList.add("cursor-disable");
         }
       });
-      element.addEventListener("mouseout", () => {
+      element.addEventListener("mouseleave", () => {
         cursor.classList.remove("cursor-disable", "cursor-icons");
         hover = false;
       });
