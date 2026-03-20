@@ -1045,6 +1045,7 @@ function WhatIDoPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
 
 function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
   const { items, refresh } = useList<TechItem>(`${API}/techstack`);
+  const { data: settingsData } = useSingle<{ themeColor?: string }>(`${API}/settings`, { themeColor: '#5eead4' });
   const empty: TechItem = { name: '', imageUrl: '', category: 'automation', highlighted: false };
   const [form, setForm] = useState<TechItem>(empty);
   const [editId, setEditId] = useState<string | null>(null);
@@ -1162,7 +1163,7 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
         {sortTechItems(items).map(item => (
           <div key={item._id} className="tech-card">
             <div className={`tech-ball-wrap ${item.category === 'extra' ? 'small' : ''}`}>
-              <SingleTechBall imageUrl={item.imageUrl} highlighted={Boolean(item.highlighted)} scale={item.category === 'automation' ? 1.2 : 0.8} accentColor={data.themeColor} />
+              <SingleTechBall imageUrl={item.imageUrl} highlighted={Boolean(item.highlighted)} scale={item.category === 'automation' ? 1.2 : 0.8} accentColor={settingsData.themeColor} />
             </div>
             <div className="tech-info">
               <span className="tech-name">{item.name}</span>
