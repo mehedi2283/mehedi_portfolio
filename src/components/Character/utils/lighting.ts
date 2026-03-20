@@ -22,6 +22,15 @@ const setLighting = (scene: THREE.Scene) => {
   pointLight.castShadow = true;
   scene.add(pointLight);
 
+  const syncAccentColor = () => {
+    const currentAccent =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--accentColor')
+        .trim() || '#5eead4';
+    directionalLight.color.set(currentAccent);
+    pointLight.color.set(currentAccent);
+  };
+
   new RGBELoader()
     .setPath("/models/")
     .load("char_enviorment.hdr?v=2", function (texture) {
@@ -32,6 +41,7 @@ const setLighting = (scene: THREE.Scene) => {
     });
 
   function setPointLight(screenLight: any) {
+    syncAccentColor();
     if (screenLight.material.opacity > 0.9) {
       pointLight.intensity = screenLight.material.emissiveIntensity * 20;
     } else {
