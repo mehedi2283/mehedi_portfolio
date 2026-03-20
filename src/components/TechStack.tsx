@@ -188,11 +188,18 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
   const [isActive, setIsActive] = useState(false);
   const [techItems, setTechItems] = useState<TechItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [accentColor, setAccentColor] = useState("#5eead4");
 
-  const accentColor = useMemo(() => {
-    if (typeof window === "undefined") return "#5eead4";
-    const c = getComputedStyle(document.documentElement).getPropertyValue("--accentColor").trim();
-    return c || "#5eead4";
+  useEffect(() => {
+    axios
+      .get("https://mehedi-portfolio-server-phi.vercel.app/api/settings")
+      .then((res) => {
+        if (res.data?.themeColor) {
+          setAccentColor(res.data.themeColor);
+          document.documentElement.style.setProperty('--accentColor', res.data.themeColor);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
