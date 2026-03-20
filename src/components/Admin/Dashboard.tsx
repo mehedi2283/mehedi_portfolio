@@ -11,12 +11,6 @@ import Career from '../Career';
 import WhatIDo from '../WhatIDo';
 import TechStack, { SingleTechBall } from '../TechStack';
 import Work from '../Work';
-import About from '../About';
-import Contact from '../Contact';
-import Career from '../Career';
-import WhatIDo from '../WhatIDo';
-import TechStack, { SingleTechBall } from '../TechStack';
-import Work from '../Work';
 
 const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
 
