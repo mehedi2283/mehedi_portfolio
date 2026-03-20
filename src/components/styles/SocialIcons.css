@@ -9,6 +9,8 @@
 }
 
 .social-icons {
+  --social-purple: #d1b3ff;
+  --social-purple-shadow: rgba(209, 179, 255, 0.72);
   position: absolute;
   left: -20px;
   bottom: 20px;
@@ -26,8 +28,8 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: #cbb1ff;
-  box-shadow: 0 0 24px rgba(203, 177, 255, 0.65);
+  background: var(--social-purple);
+  box-shadow: 0 0 24px var(--social-purple-shadow);
   transform: scaleY(0.15);
   opacity: 0;
   transition: transform 0.28s ease, opacity 0.28s ease;
@@ -63,8 +65,8 @@
 
 .social-link:hover,
 .social-link:focus-visible {
-  filter: drop-shadow(0 0 10px rgba(203, 177, 255, 0.75));
-  text-shadow: 0 0 14px rgba(203, 177, 255, 0.8);
+  filter: drop-shadow(0 0 10px var(--social-purple-shadow));
+  text-shadow: 0 0 14px var(--social-purple-shadow);
 }
 
 .resume-button {
