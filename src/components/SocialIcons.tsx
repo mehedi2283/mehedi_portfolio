@@ -12,8 +12,15 @@ import axios from "axios";
 
 const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
 
+type SocialLinks = {
+  github: string;
+  linkedin: string;
+  twitter: string;
+  instagram: string;
+};
+
 const SocialIcons = () => {
-  const [socialLinks, setSocialLinks] = useState({
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>({
     github: "https://github.com/mh-mehedihasan",
     linkedin: "https://www.linkedin.com/in/mehedihasan",
     twitter: "https://x.com/mehedihasan",
@@ -22,9 +29,11 @@ const SocialIcons = () => {
   const [resumeUrl, setResumeUrl] = useState("#");
 
   useEffect(() => {
+    let mounted = true;
+
     axios.get(`${API}/contact`)
       .then(res => {
-        if (res.data) {
+        if (mounted && res.data) {
           setSocialLinks({
             github: res.data.github || socialLinks.github,
             linkedin: res.data.linkedin || socialLinks.linkedin,
@@ -35,39 +44,34 @@ const SocialIcons = () => {
       })
       .catch(() => {});
 
-    // Fetch resume URL from settings
     axios.get(`${API}/settings`)
       .then(res => {
-        if (res.data?.resumeUrl) {
+        if (mounted && res.data?.resumeUrl) {
           setResumeUrl(res.data.resumeUrl);
         }
       })
       .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
     <div className="icons-section">
-      <div className="social-icons" data-cursor="icons" id="social">
-        <span>
-          <a href={socialLinks.github} target="_blank">
-            <FaGithub />
-          </a>
-        </span>
-        <span>
-          <a href={socialLinks.linkedin} target="_blank">
-            <FaLinkedinIn />
-          </a>
-        </span>
-        <span>
-          <a href={socialLinks.twitter} target="_blank">
-            <FaXTwitter />
-          </a>
-        </span>
-        <span>
-          <a href={socialLinks.instagram} target="_blank">
-            <FaInstagram />
-          </a>
-        </span>
+      <div className="social-icons" aria-label="Social links">
+        <a className="social-link" href={socialLinks.github} target="_blank" rel="noopener noreferrer">
+          <FaGithub />
+        </a>
+        <a className="social-link" href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+          <FaLinkedinIn />
+        </a>
+        <a className="social-link" href={socialLinks.twitter} target="_blank" rel="noopener noreferrer">
+          <FaXTwitter />
+        </a>
+        <a className="social-link" href={socialLinks.instagram} target="_blank" rel="noopener noreferrer">
+          <FaInstagram />
+        </a>
       </div>
       <a className="resume-button" href={resumeUrl} target="_blank" rel="noopener noreferrer">
         <HoverLinks text="RESUME" />

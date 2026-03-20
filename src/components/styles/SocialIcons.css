@@ -7,39 +7,62 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
 .social-icons {
   position: absolute;
   left: -20px;
   bottom: 20px;
   display: none;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   z-index: 999;
   padding: 10px;
+  border-radius: 999px;
+  isolation: isolate;
 }
-.social-icons:hover {
-  transition: 0.3s;
-  color: var(--backgroundColor);
+
+.social-icons::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #cbb1ff;
+  box-shadow: 0 0 24px rgba(203, 177, 255, 0.65);
+  transform: scaleY(0.15);
+  opacity: 0;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+  z-index: 0;
 }
-.social-icons a:hover {
-  color: var(--backgroundColor);
-  /* transform: scale(1.2); */
+
+.social-icons:hover::before,
+.social-icons:focus-within::before {
+  transform: scaleY(1);
+  opacity: 1;
 }
-.social-icons span {
+
+.social-link {
+  position: relative;
+  z-index: 1;
   width: 50px;
   height: 50px;
-  position: relative;
-  display: flex;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: #eae5ec;
+  transition: color 0.22s ease, transform 0.22s ease;
 }
-.social-icons a {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  font-size: 23px;
-  transition: color 0.2s ease;
+
+.social-icons:hover .social-link,
+.social-icons:focus-within .social-link {
+  color: #161221;
 }
+
+.social-link:hover,
+.social-link:focus-visible {
+  transform: translateY(-1px);
+}
+
 .resume-button {
   position: absolute;
   z-index: 99;
@@ -62,6 +85,7 @@
 .resume-button:hover {
   color: #fff;
 }
+
 div.resume-button span {
   color: #fff;
   font-size: 17px;
@@ -69,24 +93,14 @@ div.resume-button span {
   display: flex;
   align-items: center;
 }
-.check-line {
-  position: fixed;
-  top: 655px;
-  left: 0;
-  height: 1px;
-  background-color: #ffffff;
-  width: 100%;
-  z-index: 99999;
-}
+
 @media only screen and (min-width: 900px) {
   .social-icons {
     display: flex;
     gap: 20px;
   }
-  .social-icons a {
-    font-size: 28px;
-  }
 }
+
 @media only screen and (min-width: 768px) {
   .resume-button {
     transform: none;
