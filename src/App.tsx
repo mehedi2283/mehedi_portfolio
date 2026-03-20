@@ -2,7 +2,6 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
-import Dashboard from "./components/Admin/Dashboard";
 import { LoadingProvider } from "./context/LoadingProvider";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -27,6 +26,7 @@ const AdminRedirectListener = () => {
 
 const CharacterModel = lazy(() => import("./components/Character"));
 const MainContainer = lazy(() => import("./components/MainContainer"));
+const Dashboard = lazy(() => import("./components/Admin/Dashboard"));
 
 const App = () => {
   useEffect(() => {
@@ -51,9 +51,9 @@ const App = () => {
           path="/" 
           element={
             <LoadingProvider>
-              <Suspense>
+              <Suspense fallback={null}>
                 <MainContainer>
-                  <Suspense>
+                  <Suspense fallback={null}>
                     <CharacterModel />
                   </Suspense>
                 </MainContainer>
@@ -61,7 +61,14 @@ const App = () => {
             </LoadingProvider>
           } 
         />
-        <Route path="/admin" element={<Dashboard />} />
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={null}>
+              <Dashboard />
+            </Suspense>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
