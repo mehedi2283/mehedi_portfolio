@@ -261,9 +261,13 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
       setResumeFile(null);
       refreshResumes();
       refreshSettings();
-    } catch (error: any) {
-      const serverMessage = error?.response?.data?.message;
-      showToast(serverMessage || 'Error uploading resume', 'error');
+    } catch (error: unknown) {
+      let serverMessage = 'Error uploading resume';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        serverMessage = axiosError.response?.data?.message || serverMessage;
+      }
+      showToast(serverMessage, 'error');
     }
     setIsUploading(false);
   };
@@ -1084,7 +1088,7 @@ function WhatIDoPreview({ form, items }: { form: WhatIDo, items: WhatIDo[] }) {
     ? form.tags.split(',').map(t => t.trim()).filter(Boolean)
     : (form.tags as unknown as string[]) || [];
 
-  const previewForm = { ...form, tags: tagsList as any };
+  const previewForm = { ...form, tags: tagsList as string[] };
   const hasDraft = Boolean(form.title?.trim() || form.subtitle?.trim() || form.description?.trim() || tagsList.length > 0);
   const previewItems = hasDraft ? [...items.filter(i => i._id !== form._id), previewForm] : items;
 
@@ -1332,7 +1336,7 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
         name: item.name,
         imageUrl: item.imageUrl,
         category: item.category,
-        highlighted: !Boolean(item.highlighted),
+        highlighted: !item.highlighted,
       });
       showToast(!item.highlighted ? 'Highlighted!' : 'Highlight removed!');
       refresh();
