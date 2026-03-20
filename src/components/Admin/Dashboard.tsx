@@ -19,7 +19,9 @@ interface Project  { _id?: string; title: string; category: string; tools: strin
 interface WhatIDo  { _id?: string; title: string; subtitle: string; description: string; tags: string; order: number; }
 interface TechItem { _id?: string; name: string; imageUrl: string; category: 'automation' | 'extra'; highlighted?: boolean; }
 interface LandingData { firstName: string; lastName: string; role1: string; role2: string; }
-interface AboutData   { bio: string; }
+type AboutCategory = 'headline' | 'body' | 'note';
+interface AboutBlock { category: AboutCategory; text: string; }
+interface AboutData   { bio: string; aboutBlocks: AboutBlock[]; }
 interface ContactData { email: string; education: string; github: string; linkedin: string; twitter: string; instagram: string; }
 interface SecurityData { passkey1: string; passkey2: string; }
 
@@ -807,27 +809,91 @@ function CareerPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'er
 // ═══════════════════════════════════════════════════════════════════════════════
 //  ABOUT
 // ═══════════════════════════════════════════════════════════════════════════════
-function AboutPreview({ bio }: { bio: string }) {
+const CATEGORY_OPTIONS: { value: AboutCategory; label: string }[] = [
+  { value: 'headline', label: 'Headline' },
+  { value: 'body', label: 'Body' },
+  { value: 'note', label: 'Note' },
+];
+
+const createBlock = (category: AboutCategory = 'body', text = ''): AboutBlock => ({ category, text });
+
+const blocksFromBio = (bio: string): AboutBlock[] => {
+  const lines = bio
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (!lines.length) return [createBlock('headline')];
+  return lines.map((line, index) => createBlock(index === 0 ? 'headline' : 'body', line));
+};
+
+function AboutPreview({ bio, aboutBlocks }: AboutData) {
   return (
     <PreviewShell label="About Section Preview">
       <FrontendSectionPreview>
-        <About previewBio={bio} />
+        <About previewBio={bio} previewBlocks={aboutBlocks} />
       </FrontendSectionPreview>
     </PreviewShell>
   );
 }
 
 function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
-  const { data, setData, refresh } = useSingle<AboutData>(`${API}/about`, { bio: '' });
+  const { data, setData, refresh } = useSingle<AboutData>(`${API}/about`, { bio: '', aboutBlocks: [createBlock('headline')] });
   const [subTab, setSubTab] = useState<'manage'|'preview'>('manage');
+
+  useEffect(() => {
+    if ((!data.aboutBlocks || data.aboutBlocks.length === 0) && data.bio?.trim()) {
+      setData({ ...data, aboutBlocks: blocksFromBio(data.bio) });
+    }
+  }, [data, setData]);
+
+  const setBlock = (index: number, patch: Partial<AboutBlock>) => {
+    const next = (data.aboutBlocks || [createBlock('headline')]).map((block, idx) =>
+      idx === index ? { ...block, ...patch } : block
+    );
+    setData({ ...data, aboutBlocks: next });
+  };
+
+  const addBlock = () => {
+    setData({
+      ...data,
+      aboutBlocks: [...(data.aboutBlocks || []), createBlock('body')],
+    });
+  };
+
+  const removeBlock = (index: number) => {
+    const next = (data.aboutBlocks || []).filter((_, idx) => idx !== index);
+    setData({ ...data, aboutBlocks: next.length ? next : [createBlock('headline')] });
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { await axios.put(`${API}/about`, data); showToast('About updated!'); refresh(); }
+    const normalizedBlocks = (data.aboutBlocks || [])
+      .map((block) => ({ category: block.category, text: block.text.trim() }))
+      .filter((block) => block.text);
+    const payload: AboutData = {
+      bio: normalizedBlocks.map((block) => block.text).join('\n'),
+      aboutBlocks: normalizedBlocks,
+    };
+
+    try {
+      await axios.put(`${API}/about`, payload);
+      showToast('About updated!');
+      setData(payload);
+      refresh();
+    }
     catch { showToast('Error', 'error'); }
   };
+
+  const previewPayload: AboutData = {
+    bio: data.bio,
+    aboutBlocks: data.aboutBlocks?.length ? data.aboutBlocks : blocksFromBio(data.bio),
+  };
+
   return (
     <div className="panel">
-      <SectionHeader title="About Me" subtitle="The bio paragraph shown in the About section" />
+      <SectionHeader title="About Me" subtitle="CRM-style content blocks with category-based text styling" />
       <div className="panel-tabs">
         <button type="button" className={`panel-tab ${subTab==='manage'?'active':''}`} onClick={()=>setSubTab('manage')}>Manage Data</button>
         <button type="button" className={`panel-tab ${subTab==='preview'?'active':''}`} onClick={()=>setSubTab('preview')}>Live Preview</button>
@@ -835,17 +901,57 @@ function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'err
       {subTab === 'manage' && (
         <>
       <form className="dash-form" style={{marginBottom: 24}}  onSubmit={submit}>
-          <label className="full">Bio Text
-            <textarea rows={7} value={data.bio} onChange={e => setData({...data, bio: e.target.value})} required />
-          </label>
-          <div className="form-actions"><button type="submit" className="btn-save">Save About</button></div>
+          <div style={{ display: 'grid', gap: '14px' }}>
+            {(data.aboutBlocks || [createBlock('headline')]).map((block, index) => (
+              <div key={`about-block-${index}`} className="item-card padded-card" style={{ padding: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr auto', gap: '10px', alignItems: 'start' }}>
+                  <label>
+                    Category
+                    <select
+                      value={block.category}
+                      onChange={(e) => setBlock(index, { category: e.target.value as AboutCategory })}
+                    >
+                      {CATEGORY_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Text
+                    <textarea
+                      rows={2}
+                      value={block.text}
+                      onChange={(e) => setBlock(index, { text: e.target.value })}
+                      placeholder="Use {{word}} for highlight"
+                      required
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="btn-del"
+                    onClick={() => removeBlock(index)}
+                    style={{ alignSelf: 'end' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="form-actions" style={{ justifyContent: 'space-between' }}>
+            <button type="button" className="btn-edit" onClick={addBlock}>+ Add Text Block</button>
+            <button type="submit" className="btn-save">Save About</button>
+          </div>
+          <p style={{ marginTop: '-8px', color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+            Tip: choose a category per line. Wrap important words with <code>{'{{double braces}}'}</code> to highlight them.
+          </p>
         </form>
 
         </>
       )}
       {subTab === 'preview' && (
         <div className="preview-tab-content">
-          <AboutPreview bio={data.bio} />
+          <AboutPreview bio={previewPayload.bio} aboutBlocks={previewPayload.aboutBlocks} />
         </div>
       )}
     </div>

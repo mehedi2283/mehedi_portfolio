@@ -1,43 +1,25 @@
 .cursor-main {
   --size: 0px;
-  --cursorW: var(--size);
-  --cursorH: var(--size);
-  --cursorR: 50px;
   position: fixed;
-  top: calc(var(--cursorH) / -2);
-  left: calc(var(--cursorW) / -2);
-  width: var(--cursorW);
-  height: var(--cursorH);
-  border-radius: var(--cursorR);
+  top: calc(var(--size) / -2);
+  left: calc(var(--size) / -2);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50px;
   pointer-events: none;
   z-index: 99;
   background-color: #e6c3ff;
   box-shadow: 0px 0px 30px 0px rgb(175, 131, 255);
   mix-blend-mode: difference;
-  transition: top 0.3s ease-out, left 0.3s ease-out, width 0.24s ease-out,
-    height 0.3s ease-out, border-radius 0.24s ease-out;
+  transition: top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out,
+    height 0.3s ease-out;
 }
 
 .cursor-icons {
-  --cursorW: 50px;
-  --cursorR: 32px;
   top: 10px;
   left: 10px;
   height: calc(var(--cursorH) - 20px);
-  transition: all 0.5s ease-out, height 0.5s ease-in-out;
-}
-
-.cursor-cover {
-  --cursorW: var(--coverW);
-  --cursorH: var(--coverH);
-  --cursorR: var(--coverR);
-  mix-blend-mode: normal;
-  box-shadow: 0px 0px 24px 0px rgb(175, 131, 255);
-}
-
-.cursor-merge {
-  --cursorW: 34px;
-  --cursorR: 22px;
+  transition: all 0.34s ease-out, height 0.34s ease-in-out;
 }
 
 .cursor-disable {

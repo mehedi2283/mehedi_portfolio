@@ -25,20 +25,18 @@ const Cursor = () => {
     });
     document.querySelectorAll("[data-cursor]").forEach((item) => {
       const element = item as HTMLElement;
-      element.addEventListener("mouseenter", () => {
+      element.addEventListener("mouseenter", (e: MouseEvent) => {
+        const target = e.currentTarget as HTMLElement;
+        const rect = target.getBoundingClientRect();
 
         if (element.dataset.cursor === "icons") {
-          const rect = element.getBoundingClientRect();
-          cursor.classList.add("cursor-cover");
-          cursor.style.setProperty("--coverW", `${rect.width}px`);
-          cursor.style.setProperty("--coverH", `${rect.height}px`);
-          cursor.style.setProperty("--coverR", "28px");
-          gsap.to(cursor, {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2,
-            duration: 0.28,
-            ease: "power2.out",
-          });
+          const entryY = Math.min(Math.max(e.clientY, rect.top + 10), rect.bottom - 10);
+          cursor.classList.add("cursor-icons");
+
+          gsap.set(cursor, { x: rect.left, y: entryY - 10 });
+          gsap.to(cursor, { x: rect.left, y: rect.top, duration: 0.24, ease: "power2.out" });
+          //   cursor.style.transform = `translate(${rect.left}px,${rect.top}px)`;
+          cursor.style.setProperty("--cursorH", `${rect.height}px`);
           hover = true;
         }
         if (element.dataset.cursor === "disable") {
@@ -46,10 +44,7 @@ const Cursor = () => {
         }
       });
       element.addEventListener("mouseleave", () => {
-        cursor.classList.remove("cursor-disable", "cursor-icons", "cursor-merge", "cursor-cover");
-        cursor.style.removeProperty("--coverW");
-        cursor.style.removeProperty("--coverH");
-        cursor.style.removeProperty("--coverR");
+        cursor.classList.remove("cursor-disable", "cursor-icons");
         hover = false;
       });
     });
