@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { MdArrowOutward, MdCopyright } from "react-icons/md";
+import { MdCopyright } from "react-icons/md";
 import "./styles/Contact.css";
 
 interface ContactData {
@@ -46,21 +46,6 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
             </p>
             <h4>Education</h4>
             <p>{data.education}</p>
-          </div>
-          <div className="contact-box">
-            <h4>Social</h4>
-            <a href={data.github} target="_blank" data-cursor="disable" className="contact-social">
-              Github <MdArrowOutward />
-            </a>
-            <a href={data.linkedin} target="_blank" data-cursor="disable" className="contact-social">
-              Linkedin <MdArrowOutward />
-            </a>
-            <a href={data.twitter} target="_blank" data-cursor="disable" className="contact-social">
-              Twitter <MdArrowOutward />
-            </a>
-            <a href={data.instagram} target="_blank" data-cursor="disable" className="contact-social">
-              Instagram <MdArrowOutward />
-            </a>
           </div>
           <div className="contact-box">
             <h2>
