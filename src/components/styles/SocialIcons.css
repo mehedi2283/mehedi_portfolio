@@ -9,8 +9,8 @@
 }
 
 .social-icons {
-  --social-purple: #d1b3ff;
-  --social-purple-shadow: rgba(209, 179, 255, 0.72);
+  --social-purple: #e6c3ff;
+  --social-purple-shadow: rgba(175, 131, 255, 0.72);
   position: absolute;
   left: -20px;
   bottom: 20px;
