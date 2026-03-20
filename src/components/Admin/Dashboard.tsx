@@ -1533,8 +1533,23 @@ function ContactPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
 const Dashboard = () => {
   const [active, setActive] = useState<Section>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { toast, show: showToast } = useToast();
+
+  useEffect(() => {
+    const isAuthed = sessionStorage.getItem('adminAuthenticated') === 'true';
+    setIsAuthenticated(isAuthed);
+  }, []);
+
+  const handleAuthSuccess = () => {
+    sessionStorage.setItem('adminAuthenticated', 'true');
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminAuthenticated');
+    setIsAuthenticated(false);
+  };
 
   const renderPanel = () => {
     switch (active) {
@@ -1552,7 +1567,7 @@ const Dashboard = () => {
     }
   };
 
-  if (!isAuthenticated) return <LoginScreen onAuth={() => setIsAuthenticated(true)} />;
+  if (!isAuthenticated) return <LoginScreen onAuth={handleAuthSuccess} />;
 
   return (
     <div className="dash-root">
@@ -1573,7 +1588,7 @@ const Dashboard = () => {
             {sidebarOpen && (
               <button
                 className="sidebar-icon-btn"
-                onClick={() => setIsAuthenticated(false)}
+                onClick={handleLogout}
                 aria-label="Logout"
                 title="Logout"
                 type="button"
