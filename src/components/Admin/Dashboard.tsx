@@ -1223,6 +1223,7 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
   const [showForm, setShowForm] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [togglingHighlightId, setTogglingHighlightId] = useState<string | null>(null);
 
   const sortTechItems = (list: TechItem[]) => {
     const score = (item: TechItem) => {
@@ -1283,6 +1284,25 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
     await axios.delete(`${API}/techstack/${deleteId}`); showToast('Deleted!'); refresh();
     setDeleteId(null);
   };
+
+  const toggleHighlight = async (item: TechItem) => {
+    if (!item._id) return;
+    setTogglingHighlightId(item._id);
+    try {
+      await axios.put(`${API}/techstack/${item._id}`, {
+        name: item.name,
+        imageUrl: item.imageUrl,
+        category: item.category,
+        highlighted: !Boolean(item.highlighted),
+      });
+      showToast(!item.highlighted ? 'Highlighted!' : 'Highlight removed!');
+      refresh();
+    } catch {
+      showToast('Error updating highlight', 'error');
+    }
+    setTogglingHighlightId(null);
+  };
+
   return (
     <div className="panel">
       <SectionHeader title="Tech Stack" subtitle="Technologies shown as 3D physics balls" />
@@ -1343,6 +1363,21 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
             </div>
             <div className="item-actions">
               <button className="btn-edit" onClick={() => edit(item)}>Edit</button>
+              <button
+                className="btn-save"
+                style={{
+                  padding: '8px 14px',
+                  background: item.highlighted ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                  color: item.highlighted ? '#f59e0b' : '#10b981',
+                  border: `1px solid ${item.highlighted ? 'rgba(245, 158, 11, 0.35)' : 'rgba(16, 185, 129, 0.35)'}`,
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+                disabled={togglingHighlightId === item._id}
+                onClick={() => toggleHighlight(item)}
+              >
+                {togglingHighlightId === item._id ? 'Saving...' : item.highlighted ? 'Unhighlight' : 'Highlight'}
+              </button>
               <button className="btn-del"  onClick={() => del(item._id!)}>Delete</button>
             </div>
           </div>
