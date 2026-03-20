@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MdHome, MdMenu, MdChevronLeft, MdChevronRight, MdSettings } from 'react-icons/md';
 import { FiGrid, FiFolder, FiBriefcase, FiUser, FiHome, FiTrendingUp, FiTool, FiMail, FiFileText, FiLogOut } from 'react-icons/fi';
@@ -257,8 +257,9 @@ function ResumesPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
       setResumeFile(null);
       refreshResumes();
       refreshSettings();
-    } catch {
-      showToast('Error uploading resume', 'error');
+    } catch (error: any) {
+      const serverMessage = error?.response?.data?.message;
+      showToast(serverMessage || 'Error uploading resume', 'error');
     }
     setIsUploading(false);
   };
@@ -841,12 +842,32 @@ function AboutPreview({ bio, aboutBlocks }: AboutData) {
 function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
   const { data, setData, refresh } = useSingle<AboutData>(`${API}/about`, { bio: '', aboutBlocks: [createBlock('headline')] });
   const [subTab, setSubTab] = useState<'manage'|'preview'>('manage');
+  const [openCategoryFor, setOpenCategoryFor] = useState<number | null>(null);
+  const dropdownRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
     if ((!data.aboutBlocks || data.aboutBlocks.length === 0) && data.bio?.trim()) {
       setData({ ...data, aboutBlocks: blocksFromBio(data.bio) });
     }
   }, [data, setData]);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      if (openCategoryFor === null) return;
+      const activeRef = dropdownRefs.current[openCategoryFor];
+      const target = event.target as Node;
+      if (activeRef && !activeRef.contains(target)) {
+        setOpenCategoryFor(null);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, [openCategoryFor]);
+
+  const getCategoryLabel = (category: AboutCategory) => {
+    return CATEGORY_OPTIONS.find((opt) => opt.value === category)?.label || 'Body';
+  };
 
   const setBlock = (index: number, patch: Partial<AboutBlock>) => {
     const next = (data.aboutBlocks || [createBlock('headline')]).map((block, idx) =>
@@ -864,6 +885,7 @@ function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'err
 
   const removeBlock = (index: number) => {
     const next = (data.aboutBlocks || []).filter((_, idx) => idx !== index);
+    setOpenCategoryFor(null);
     setData({ ...data, aboutBlocks: next.length ? next : [createBlock('headline')] });
   };
 
@@ -900,25 +922,48 @@ function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'err
       </div>
       {subTab === 'manage' && (
         <>
-      <form className="dash-form" style={{marginBottom: 24}}  onSubmit={submit}>
-          <div style={{ display: 'grid', gap: '14px' }}>
+      <form className="dash-form about-crm-form" style={{marginBottom: 24}}  onSubmit={submit}>
+          <div className="about-crm-blocks">
             {(data.aboutBlocks || [createBlock('headline')]).map((block, index) => (
-              <div key={`about-block-${index}`} className="item-card padded-card" style={{ padding: '14px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr auto', gap: '10px', alignItems: 'start' }}>
-                  <label>
+              <div key={`about-block-${index}`} className={`item-card padded-card about-crm-card about-crm-${block.category} ${openCategoryFor === index ? 'dropdown-open' : ''}`} style={{ padding: '14px' }}>
+                <div className="about-crm-grid">
+                  <label className="about-crm-field about-crm-category-field">
                     Category
-                    <select
-                      value={block.category}
-                      onChange={(e) => setBlock(index, { category: e.target.value as AboutCategory })}
-                    >
-                      {CATEGORY_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
+                    <div className="about-custom-select" ref={(el) => { dropdownRefs.current[index] = el; }}>
+                      <button
+                        type="button"
+                        className="about-select-trigger"
+                        aria-haspopup="listbox"
+                        aria-expanded={openCategoryFor === index}
+                        onClick={() => setOpenCategoryFor(openCategoryFor === index ? null : index)}
+                      >
+                        <span>{getCategoryLabel(block.category)}</span>
+                        <span className={`about-select-caret ${openCategoryFor === index ? 'open' : ''}`} />
+                      </button>
+
+                      {openCategoryFor === index && (
+                        <div className="about-select-menu" role="listbox">
+                          {CATEGORY_OPTIONS.map((opt) => (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              className={`about-select-option ${block.category === opt.value ? 'active' : ''}`}
+                              onClick={() => {
+                                setBlock(index, { category: opt.value as AboutCategory });
+                                setOpenCategoryFor(null);
+                              }}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </label>
-                  <label>
+                  <label className="about-crm-field about-crm-text-field">
                     Text
                     <textarea
+                      className="about-textarea"
                       rows={2}
                       value={block.text}
                       onChange={(e) => setBlock(index, { text: e.target.value })}
@@ -928,9 +973,8 @@ function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'err
                   </label>
                   <button
                     type="button"
-                    className="btn-del"
+                    className="btn-del about-remove-btn"
                     onClick={() => removeBlock(index)}
-                    style={{ alignSelf: 'end' }}
                   >
                     Remove
                   </button>
@@ -938,11 +982,11 @@ function AboutPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'err
               </div>
             ))}
           </div>
-          <div className="form-actions" style={{ justifyContent: 'space-between' }}>
+          <div className="form-actions about-crm-actions">
             <button type="button" className="btn-edit" onClick={addBlock}>+ Add Text Block</button>
             <button type="submit" className="btn-save">Save About</button>
           </div>
-          <p style={{ marginTop: '-8px', color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+          <p className="about-crm-tip">
             Tip: choose a category per line. Wrap important words with <code>{'{{double braces}}'}</code> to highlight them.
           </p>
         </form>
