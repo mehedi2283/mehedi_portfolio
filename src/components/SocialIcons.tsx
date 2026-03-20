@@ -50,11 +50,20 @@ const SocialIcons = () => {
       const elem = item as HTMLElement;
       const link = elem.querySelector("a") as HTMLElement;
 
-      const rect = elem.getBoundingClientRect();
-      let mouseX = rect.width / 2;
-      let mouseY = rect.height / 2;
-      let currentX = 0;
-      let currentY = 0;
+      let rafId = 0;
+      const getCenter = () => {
+        const rect = elem.getBoundingClientRect();
+        return { x: rect.width / 2, y: rect.height / 2 };
+      };
+
+      const center = getCenter();
+      let mouseX = center.x;
+      let mouseY = center.y;
+      let currentX = center.x;
+      let currentY = center.y;
+
+      link.style.setProperty("--siLeft", `${center.x}px`);
+      link.style.setProperty("--siTop", `${center.y}px`);
 
       const updatePosition = () => {
         currentX += (mouseX - currentX) * 0.1;
@@ -63,14 +72,15 @@ const SocialIcons = () => {
         link.style.setProperty("--siLeft", `${currentX}px`);
         link.style.setProperty("--siTop", `${currentY}px`);
 
-        requestAnimationFrame(updatePosition);
+        rafId = requestAnimationFrame(updatePosition);
       };
 
       const onMouseMove = (e: MouseEvent) => {
+        const rect = elem.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        if (x < 40 && x > 10 && y < 40 && y > 5) {
+        if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
           mouseX = x;
           mouseY = y;
         } else {
@@ -79,12 +89,29 @@ const SocialIcons = () => {
         }
       };
 
-      document.addEventListener("mousemove", onMouseMove);
+      const onMouseEnter = (e: MouseEvent) => {
+        const rect = elem.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      };
+
+      const onMouseLeave = () => {
+        const nextCenter = getCenter();
+        mouseX = nextCenter.x;
+        mouseY = nextCenter.y;
+      };
+
+      elem.addEventListener("mousemove", onMouseMove);
+      elem.addEventListener("mouseenter", onMouseEnter);
+      elem.addEventListener("mouseleave", onMouseLeave);
 
       updatePosition();
 
       return () => {
         elem.removeEventListener("mousemove", onMouseMove);
+        elem.removeEventListener("mouseenter", onMouseEnter);
+        elem.removeEventListener("mouseleave", onMouseLeave);
+        cancelAnimationFrame(rafId);
       };
     });
   }, []);
