@@ -42,13 +42,14 @@ function RotatingBall({ scale, geometry, material }: { scale: number; geometry: 
   );
 }
 
-export function SingleTechBall({ imageUrl, scale = 1, highlighted = false }: { imageUrl: string; scale?: number; highlighted?: boolean }) {
+export function SingleTechBall({ imageUrl, scale = 1, highlighted = false, accentColor: propAccentColor }: { imageUrl: string; scale?: number; highlighted?: boolean; accentColor?: string }) {
   const texture = useMemo(() => instanceTextureLoader.load(imageUrl), [imageUrl]);
   const accentColor = useMemo(() => {
+    if (propAccentColor) return propAccentColor;
     if (typeof window === "undefined") return "#5eead4";
     const c = getComputedStyle(document.documentElement).getPropertyValue("--accentColor").trim();
     return c || "#5eead4";
-  }, []);
+  }, [propAccentColor]);
 
   const material = useMemo(
     () =>
