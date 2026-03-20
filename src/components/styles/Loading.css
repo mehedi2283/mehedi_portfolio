@@ -87,7 +87,7 @@
   transform: translate(-50%, -50%);
   filter: blur(30px);
   opacity: 1;
-  transition: opacity 500ms;
+  transition: opacity 500ms, background-color 450ms ease;
 }
 
 .loading-wrap:hover .loading-hover {
@@ -308,6 +308,7 @@
   animation: ball25 7s infinite;
   transform: translateY(10px);
   animation-timing-function: cubic-bezier(0.3, 1.18, 0.63, 1.28);
+  transition: background-color 450ms ease;
 }
 
 .loading-marquee {
