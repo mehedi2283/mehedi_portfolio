@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./styles/WhatIDo.css";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -15,8 +15,10 @@ export interface WhatIDoItem {
 
 const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
   const [services, setServices] = useState<WhatIDoItem[]>([]);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
+  const containerRef = useRef<(HTMLDivElement | null)[]>([]);
+  const setRef = (el: HTMLDivElement | null, index: number) => {
+    containerRef.current[index] = el;
+  };
   useEffect(() => {
     if (previewData) {
       setServices(previewData);
@@ -27,14 +29,23 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
       .catch(() => {});
   }, [previewData]);
 
-  const isTouch = useMemo(() => ScrollTrigger.isTouch === 1, []);
-
   useEffect(() => {
-    if (!services.length) return;
-    // Keep one card expanded by default so the section always has a clear focal point.
-    setActiveIndex(0);
-  }, [services.length]);
-
+    if (ScrollTrigger.isTouch) {
+      containerRef.current.forEach((container) => {
+        if (container) {
+          container.classList.remove("what-noTouch");
+          container.addEventListener("click", () => handleClick(container));
+        }
+      });
+    }
+    return () => {
+      containerRef.current.forEach((container) => {
+        if (container) {
+          container.removeEventListener("click", () => handleClick(container));
+        }
+      });
+    };
+  }, [services]);
   return (
     <div className="whatIDO">
       <div className="what-box">
@@ -46,12 +57,7 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
         </h2>
       </div>
       <div className="what-box">
-        <div
-          className="what-box-in"
-          onMouseLeave={() => {
-            if (!isTouch && services.length > 0) setActiveIndex(0);
-          }}
-        >
+        <div className={`what-box-in ${services.length > 2 ? "what-many" : ""}`}>
           <div className="what-border2">
             <svg width="100%">
               <line
@@ -78,19 +84,12 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
             const tagsList = typeof item.tags === 'string' 
               ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
               : (item.tags || []);
-            const isExpanded = activeIndex === index;
             
             return (
               <div
                 key={item._id || index}
-                className={`what-content ${isExpanded ? "what-content-expanded" : "what-content-collapsed"}`}
-                onMouseEnter={() => {
-                  if (!isTouch) setActiveIndex(index);
-                }}
-                onClick={() => {
-                  if (!isTouch) return;
-                  setActiveIndex((prev) => (prev === index ? null : index));
-                }}
+                className="what-content what-noTouch"
+                ref={(el) => setRef(el, index)}
               >
                 <div className="what-border1">
                   <svg height="100%">
@@ -124,3 +123,18 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
 };
 
 export default WhatIDo;
+
+function handleClick(container: HTMLDivElement) {
+  container.classList.toggle("what-content-active");
+  container.classList.remove("what-sibling");
+  if (container.parentElement) {
+    const siblings = Array.from(container.parentElement.children);
+
+    siblings.forEach((sibling) => {
+      if (sibling !== container) {
+        sibling.classList.remove("what-content-active");
+        sibling.classList.toggle("what-sibling");
+      }
+    });
+  }
+}
