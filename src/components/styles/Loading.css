@@ -214,9 +214,19 @@
 }
 
 .loader-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.2px;
+}
+
+.loader-title-logo {
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: brightness(0);
 }
 
 @keyframes blink {
