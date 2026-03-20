@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, lazy, Suspense } from 'react';
 import axios from 'axios';
 import { MdHome, MdMenu, MdChevronLeft, MdChevronRight, MdSettings } from 'react-icons/md';
 import { FiGrid, FiFolder, FiBriefcase, FiUser, FiHome, FiTrendingUp, FiTool, FiMail, FiFileText, FiLogOut } from 'react-icons/fi';
@@ -9,8 +9,10 @@ import About from '../About';
 import Contact from '../Contact';
 import Career from '../Career';
 import WhatIDo from '../WhatIDo';
-import TechStack, { SingleTechBall } from '../TechStack';
+import { SingleTechBall } from '../SingleTechBall';
 import Work from '../Work';
+
+const TechStackPreview = lazy(() => import('../TechStack'));
 
 const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
 
@@ -1452,11 +1454,13 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
         <div className="preview-tab-content" style={{ height: '800px', position: 'relative', overflow: 'hidden' }}>
           <PreviewShell label="3D Tech Stack Preview">
             <FrontendSectionPreview>
-              <TechStack previewData={
-                (form.name?.trim() || form.imageUrl?.trim())
-                  ? sortTechItems([...items.filter(i => i._id !== form._id), form])
-                  : sortTechItems(items)
-              } />
+              <Suspense fallback={<div style={{ padding: '16px', color: 'rgba(255,255,255,0.6)' }}>Loading 3D preview...</div>}>
+                <TechStackPreview previewData={
+                  (form.name?.trim() || form.imageUrl?.trim())
+                    ? sortTechItems([...items.filter(i => i._id !== form._id), form])
+                    : sortTechItems(items)
+                } />
+              </Suspense>
             </FrontendSectionPreview>
           </PreviewShell>
         </div>
