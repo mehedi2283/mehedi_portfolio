@@ -44,7 +44,12 @@ const Navbar = () => {
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
           <span className="navbar-title-logo" aria-hidden="true" />
-          <span>MH</span>
+          <span className="navbar-title-text">
+            <span className="navbar-title-text-in">
+              MH
+              <span aria-hidden="true">MH</span>
+            </span>
+          </span>
         </a>
         <a
           href="mailto:mehedihasan123456789.mh.mh@gmail.com"

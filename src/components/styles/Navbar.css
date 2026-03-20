@@ -60,13 +60,28 @@
   mask: url('/images/mhb_logo.svg') center / contain no-repeat;
 }
 
-.navbar-title span {
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), color 260ms ease;
+.navbar-title-text {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  line-height: 1;
 }
 
-.navbar-title:hover span {
-  transform: translateY(-2px);
+.navbar-title-text-in {
+  position: relative;
+  display: inline-flex;
+  transition: transform 0.3s ease;
+}
+
+.navbar-title-text-in > span {
+  position: absolute;
+  top: 100%;
+  left: 0;
   color: var(--accentColor);
+}
+
+.navbar-title:hover .navbar-title-text-in {
+  transform: translateY(-100%);
 }
 @media only screen and (min-width: 500px) {
   .header {

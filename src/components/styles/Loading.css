@@ -232,13 +232,28 @@
   mask: url('/images/mhb_logo.svg') center / contain no-repeat;
 }
 
-.loader-title span {
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), color 260ms ease;
+.loader-title-text {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  line-height: 1;
 }
 
-.loader-title:hover span {
-  transform: translateY(-2px);
+.loader-title-text-in {
+  position: relative;
+  display: inline-flex;
+  transition: transform 0.3s ease;
+}
+
+.loader-title-text-in > span {
+  position: absolute;
+  top: 100%;
+  left: 0;
   color: var(--accentColor);
+}
+
+.loader-title:hover .loader-title-text-in {
+  transform: translateY(-100%);
 }
 
 @keyframes blink {
