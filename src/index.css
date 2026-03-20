@@ -113,6 +113,24 @@ body {
   margin-bottom: -100px;
 }
 
+.techstack::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0) 8%,
+    rgba(0, 0, 0, 0) 92%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
 .techstack h2 {
   font-size: 80px;
   text-align: center;
