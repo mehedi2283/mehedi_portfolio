@@ -55,6 +55,18 @@ const MainContainer = ({ children }: PropsWithChildren) => {
     return () => observer.disconnect();
   }, [isDesktopView, shouldLoadTechStack]);
 
+  useEffect(() => {
+    if (!isDesktopView) return;
+    if (shouldLoadTechStack) return;
+
+    // Fallback preload so refresh starts fetching TechStack chunk even before section scroll.
+    const preloadTimer = window.setTimeout(() => {
+      setShouldLoadTechStack(true);
+    }, 1200);
+
+    return () => window.clearTimeout(preloadTimer);
+  }, [isDesktopView, shouldLoadTechStack]);
+
   return (
     <div className="container-main">
       <Cursor />
