@@ -25,16 +25,25 @@ const Cursor = () => {
     });
     document.querySelectorAll("[data-cursor]").forEach((item) => {
       const element = item as HTMLElement;
-      element.addEventListener("mouseenter", () => {
+      element.addEventListener("mouseenter", (e: MouseEvent) => {
         const target = element;
         const rect = target.getBoundingClientRect();
 
         if (element.dataset.cursor === "icons") {
           cursor.classList.add("cursor-icons");
 
-          gsap.to(cursor, { x: rect.left, y: rect.top, duration: 0.1 });
-          //   cursor.style.transform = `translate(${rect.left}px,${rect.top}px)`;
-          cursor.style.setProperty("--cursorH", `${rect.height}px`);
+          // Start from the real entry point, then expand/move to the full icons rail.
+          gsap.set(cursor, { x: e.clientX, y: e.clientY });
+          cursor.style.setProperty("--cursorH", `0px`);
+          requestAnimationFrame(() => {
+            gsap.to(cursor, {
+              x: rect.left,
+              y: rect.top,
+              duration: 0.35,
+              ease: "power2.out",
+            });
+            cursor.style.setProperty("--cursorH", `${rect.height}px`);
+          });
           hover = true;
         }
         if (element.dataset.cursor === "disable") {
