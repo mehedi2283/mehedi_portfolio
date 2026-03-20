@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import { MdHome, MdMenu, MdChevronLeft, MdChevronRight, MdSettings } from 'react-icons/md';
 import { FiGrid, FiFolder, FiBriefcase, FiUser, FiHome, FiTrendingUp, FiTool, FiMail, FiFileText, FiLogOut } from 'react-icons/fi';
@@ -1224,6 +1224,8 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [togglingHighlightId, setTogglingHighlightId] = useState<string | null>(null);
+  const techCardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const previousPositionsRef = useRef<Map<string, DOMRect>>(new Map());
 
   const sortTechItems = (list: TechItem[]) => {
     const score = (item: TechItem) => {
@@ -1242,6 +1244,41 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [subTab, setSubTab] = useState<'manage'|'preview'>('manage');
+  const sortedItems = sortTechItems(items);
+
+  useLayoutEffect(() => {
+    const currentPositions = new Map<string, DOMRect>();
+    techCardRefs.current.forEach((el, id) => {
+      currentPositions.set(id, el.getBoundingClientRect());
+    });
+
+    if (previousPositionsRef.current.size > 0) {
+      currentPositions.forEach((currentRect, id) => {
+        const previousRect = previousPositionsRef.current.get(id);
+        const card = techCardRefs.current.get(id);
+        if (!previousRect || !card) return;
+
+        const deltaX = previousRect.left - currentRect.left;
+        const deltaY = previousRect.top - currentRect.top;
+
+        if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return;
+
+        card.animate(
+          [
+            { transform: `translate(${deltaX}px, ${deltaY}px)` },
+            { transform: 'translate(0, 0)' },
+          ],
+          {
+            duration: 460,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          }
+        );
+      });
+    }
+
+    previousPositionsRef.current = currentPositions;
+  }, [sortedItems]);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
@@ -1351,8 +1388,17 @@ function TechStackPanel({ showToast }: { showToast: (m: string, t?: 'success' | 
       )}
 
       <div className="tech-grid">
-        {sortTechItems(items).map(item => (
-          <div key={item._id} className="tech-card">
+        {sortedItems.map(item => (
+          <div
+            key={item._id}
+            className="tech-card"
+            ref={(el) => {
+              if (!item._id) return;
+              if (el) techCardRefs.current.set(item._id, el);
+              else techCardRefs.current.delete(item._id);
+            }}
+            style={{ willChange: 'transform' }}
+          >
             <div className={`tech-ball-wrap ${item.category === 'extra' ? 'small' : ''}`}>
               <SingleTechBall imageUrl={item.imageUrl} highlighted={Boolean(item.highlighted)} scale={item.category === 'automation' ? 1.2 : 0.8} accentColor={settingsData.themeColor} />
             </div>
