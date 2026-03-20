@@ -123,7 +123,7 @@ const SocialIcons = () => {
         ) : null}
       </div>
       {resumeUrl ? (
-        <a className="resume-button hover-link" href={resumeUrl} target="_blank" rel="noopener noreferrer">
+        <a className="resume-button hover-link" data-cursor="disable" href={resumeUrl} target="_blank" rel="noopener noreferrer">
           <HoverLinks text="RESUME" />
           <span>
             <TbNotes />
