@@ -21,15 +21,6 @@ const SocialIcons = () => {
   });
   const [resumeUrl, setResumeUrl] = useState("#");
 
-  const setHoverOrigin = (event: React.MouseEvent<HTMLSpanElement>) => {
-    const target = event.currentTarget;
-    const rect = target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    target.style.setProperty("--hover-x", `${x}px`);
-    target.style.setProperty("--hover-y", `${y}px`);
-  };
-
   useEffect(() => {
     axios.get(`${API}/contact`)
       .then(res => {
@@ -52,27 +43,71 @@ const SocialIcons = () => {
         }
       })
       .catch(() => {});
+
+    const social = document.getElementById("social") as HTMLElement;
+
+    social.querySelectorAll("span").forEach((item) => {
+      const elem = item as HTMLElement;
+      const link = elem.querySelector("a") as HTMLElement;
+
+      const rect = elem.getBoundingClientRect();
+      let mouseX = rect.width / 2;
+      let mouseY = rect.height / 2;
+      let currentX = 0;
+      let currentY = 0;
+
+      const updatePosition = () => {
+        currentX += (mouseX - currentX) * 0.1;
+        currentY += (mouseY - currentY) * 0.1;
+
+        link.style.setProperty("--siLeft", `${currentX}px`);
+        link.style.setProperty("--siTop", `${currentY}px`);
+
+        requestAnimationFrame(updatePosition);
+      };
+
+      const onMouseMove = (e: MouseEvent) => {
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (x < 40 && x > 10 && y < 40 && y > 5) {
+          mouseX = x;
+          mouseY = y;
+        } else {
+          mouseX = rect.width / 2;
+          mouseY = rect.height / 2;
+        }
+      };
+
+      document.addEventListener("mousemove", onMouseMove);
+
+      updatePosition();
+
+      return () => {
+        elem.removeEventListener("mousemove", onMouseMove);
+      };
+    });
   }, []);
 
   return (
     <div className="icons-section">
       <div className="social-icons" data-cursor="icons" id="social">
-        <span onMouseEnter={setHoverOrigin} onMouseMove={setHoverOrigin}>
+        <span>
           <a href={socialLinks.github} target="_blank">
             <FaGithub />
           </a>
         </span>
-        <span onMouseEnter={setHoverOrigin} onMouseMove={setHoverOrigin}>
+        <span>
           <a href={socialLinks.linkedin} target="_blank">
             <FaLinkedinIn />
           </a>
         </span>
-        <span onMouseEnter={setHoverOrigin} onMouseMove={setHoverOrigin}>
+        <span>
           <a href={socialLinks.twitter} target="_blank">
             <FaXTwitter />
           </a>
         </span>
-        <span onMouseEnter={setHoverOrigin} onMouseMove={setHoverOrigin}>
+        <span>
           <a href={socialLinks.instagram} target="_blank">
             <FaInstagram />
           </a>

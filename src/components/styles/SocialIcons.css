@@ -30,41 +30,18 @@
   height: 50px;
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  overflow: hidden;
-  --hover-x: 50%;
-  --hover-y: 50%;
-}
-
-.social-icons span::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-color: #cbb1ff;
-  clip-path: circle(0px at var(--hover-x) var(--hover-y));
-  transition: clip-path 0.35s ease;
-  z-index: 0;
-}
-
-.social-icons span:hover::before {
-  clip-path: circle(80px at var(--hover-x) var(--hover-y));
 }
 .social-icons a {
+  --siLeft: 50%;
+  --siTop: 50%;
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: var(--siLeft, 50%);
+  top: var(--siTop, 50%);
   transform: translate(-50%, -50%);
   display: flex;
   font-size: 23px;
-  z-index: 1;
-  transition: color 0.25s ease;
-}
-
-.social-icons span:hover a {
-  color: var(--backgroundColor);
+  will-change: left, top;
+  transition: transform 0.3s ease-out;
 }
 .resume-button {
   position: absolute;
