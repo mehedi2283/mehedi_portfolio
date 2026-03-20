@@ -23,25 +23,6 @@
   isolation: isolate;
 }
 
-.social-icons::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--social-purple);
-  box-shadow: 0 0 24px var(--social-purple-shadow);
-  transform: scaleY(0.15);
-  opacity: 0;
-  transition: transform 0.28s ease, opacity 0.28s ease;
-  z-index: 0;
-}
-
-.social-icons:hover::before,
-.social-icons:focus-within::before {
-  transform: scaleY(1);
-  opacity: 1;
-}
-
 .social-link {
   --jx: 0px;
   --jy: 0px;
