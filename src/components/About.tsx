@@ -12,7 +12,7 @@ const About = ({ previewBio }: { previewBio?: string }) => {
       setBio(previewBio);
       return;
     }
-    axios.get('http://localhost:5000/api/about')
+    axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/about')
       .then(res => { if (res.data?.bio) setBio(res.data.bio); })
       .catch(() => {});
   }, [previewBio]);

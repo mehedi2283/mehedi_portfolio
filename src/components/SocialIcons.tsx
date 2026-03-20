@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import HoverLinks from "./HoverLinks";
 import axios from "axios";
 
-const API = 'http://localhost:5000/api';
+const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
 
 const SocialIcons = () => {
   const [socialLinks, setSocialLinks] = useState({

@@ -29,7 +29,7 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
       setData(previewData);
       return;
     }
-    axios.get('http://localhost:5000/api/contact')
+    axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/contact')
       .then(res => { if (res.data?.email) setData({ ...FALLBACK, ...res.data }); })
       .catch(() => {});
   }, [previewData]);

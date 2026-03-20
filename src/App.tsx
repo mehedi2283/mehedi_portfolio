@@ -32,7 +32,7 @@ const App = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/settings');
+        const res = await axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/settings');
         if (res.data && res.data.themeColor) {
           document.documentElement.style.setProperty('--accentColor', res.data.themeColor);
         }

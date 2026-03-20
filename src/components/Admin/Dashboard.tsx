@@ -11,7 +11,7 @@ import WhatIDo from '../WhatIDo';
 import TechStack, { SingleTechBall } from '../TechStack';
 import Work from '../Work';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://mehedi-portfolio-server-phi.vercel.app/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Career   { _id?: string; title: string; company: string; dateRange: string; description: string; order: number; }

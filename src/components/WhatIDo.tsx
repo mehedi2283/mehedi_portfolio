@@ -24,7 +24,7 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
       setServices(previewData);
       return;
     }
-    axios.get("http://localhost:5000/api/whatido")
+    axios.get("https://mehedi-portfolio-server-phi.vercel.app/api/whatido")
       .then(res => setServices(res.data))
       .catch(() => {});
   }, [previewData]);

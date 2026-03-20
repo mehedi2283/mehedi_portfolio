@@ -22,7 +22,7 @@ const Landing = ({ children, previewData }: PropsWithChildren<{ previewData?: La
       setData(previewData);
       return;
     }
-    axios.get('http://localhost:5000/api/landing')
+    axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/landing')
       .then(res => { if (res.data?.firstName) setData(res.data); })
       .catch(() => {});
   }, [previewData]);

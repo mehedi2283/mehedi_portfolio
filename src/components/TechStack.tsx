@@ -203,7 +203,7 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
     }
 
     axios
-      .get("http://localhost:5000/api/techstack")
+      .get("https://mehedi-portfolio-server-phi.vercel.app/api/techstack")
       .then((res) => {
         setTechItems(res.data);
         setLoading(false);
