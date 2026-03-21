@@ -32,7 +32,11 @@ const setCharacter = (
             blobUrl,
             async (gltf) => {
               character = gltf.scene;
-              await renderer.compileAsync(character, camera, scene);
+
+              // Do not block initial UX on shader precompile.
+              // Compile in background to reduce first-load waiting time.
+              renderer.compileAsync(character, camera, scene).catch(() => {});
+
               character.traverse((child: THREE.Object3D) => {
                 if (child instanceof THREE.Mesh) {
                   const mesh = child;
