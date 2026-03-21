@@ -3,6 +3,10 @@ import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
 import { setCharTimeline, setAllTimeline } from "../../utils/GsapScroll";
 import { decryptFile } from "./decrypt";
 
+const CHARACTER_MODEL_VERSION = 3;
+const CHARACTER_MODEL_PASSWORD = "Character3D#@";
+const CHARACTER_MODEL_PATH = `/models/character.enc?v=${CHARACTER_MODEL_VERSION}`;
+
 const setCharacter = (
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
@@ -18,8 +22,8 @@ const setCharacter = (
       (async () => {
         try {
           const encryptedBlob = await decryptFile(
-            "/models/character.enc?v=2",
-            "MyCharacter12"
+            CHARACTER_MODEL_PATH,
+            CHARACTER_MODEL_PASSWORD
           );
           const blobUrl = URL.createObjectURL(new Blob([encryptedBlob]));
 
