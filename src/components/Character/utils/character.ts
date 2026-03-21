@@ -10,47 +10,6 @@ const CHARACTER_MODEL_PATHS = [
   "/models/character.enc?v=2",
   "/models/character.enc",
 ];
-const CAP_LOGO_TEXTURE_PATH = "/images/mhb_logo.svg";
-const CAP_NAME_HINTS = ["cap", "hat"];
-
-const capLogoTexture = new THREE.TextureLoader().load(CAP_LOGO_TEXTURE_PATH);
-capLogoTexture.colorSpace = THREE.SRGBColorSpace;
-
-const looksLikeCapMesh = (name: string) => {
-  const lower = name.toLowerCase();
-  return CAP_NAME_HINTS.some((hint) => lower.includes(hint));
-};
-
-const addCapFrontLogoDecal = (capMesh: THREE.Mesh) => {
-  capMesh.geometry.computeBoundingBox();
-  const bbox = capMesh.geometry.boundingBox;
-  if (!bbox) return;
-
-  const width = bbox.max.x - bbox.min.x;
-  const height = bbox.max.y - bbox.min.y;
-
-  // Small logo decal near the front-center of the cap.
-  const decalWidth = width * 0.22;
-  const decalHeight = height * 0.12;
-  const decalGeometry = new THREE.PlaneGeometry(decalWidth, decalHeight);
-  const decalMaterial = new THREE.MeshBasicMaterial({
-    map: capLogoTexture,
-    transparent: true,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-  });
-
-  const decal = new THREE.Mesh(decalGeometry, decalMaterial);
-  decal.name = "cap_logo_decal";
-  decal.renderOrder = 10;
-
-  const centerX = (bbox.min.x + bbox.max.x) * 0.5;
-  const centerY = bbox.min.y + height * 0.55;
-  const frontZ = bbox.max.z + 0.003;
-
-  decal.position.set(centerX, centerY, frontZ);
-  capMesh.add(decal);
-};
 
 const isValidGlbBuffer = (buffer: ArrayBuffer): boolean => {
   if (buffer.byteLength < 12) return false;
@@ -97,73 +56,86 @@ const setCharacter = (
       (async () => {
         try {
           const encryptedBlob = await decryptCharacterModel();
-          const blobUrl = URL.createObjectURL(new Blob([encryptedBlob]));
+          const parseGltf = () =>
+            new Promise<GLTF>((resolveParsed, rejectParsed) => {
+              loader.parse(encryptedBlob, "", resolveParsed, rejectParsed);
+            });
 
-          let character: THREE.Object3D;
-          loader.load(
-            blobUrl,
-            async (gltf) => {
-              character = gltf.scene;
+          const loadViaBlobUrl = () =>
+            new Promise<GLTF>((resolveLoaded, rejectLoaded) => {
+              const blobUrl = URL.createObjectURL(
+                new Blob([encryptedBlob], { type: "model/gltf-binary" })
+              );
+              loader.load(
+                blobUrl,
+                (gltf) => {
+                  URL.revokeObjectURL(blobUrl);
+                  resolveLoaded(gltf);
+                },
+                undefined,
+                (error) => {
+                  URL.revokeObjectURL(blobUrl);
+                  rejectLoaded(error);
+                }
+              );
+            });
 
-              // Resolve immediately so rendering can continue even if optional
-              // styling/decal logic fails on specific meshes.
-              resolve(gltf);
+          let gltf: GLTF;
+          try {
+            gltf = await parseGltf();
+          } catch {
+            gltf = await loadViaBlobUrl();
+          }
 
-              // Do not block initial UX on shader precompile.
-              // Compile in background to reduce first-load waiting time.
-              renderer.compileAsync(character, camera, scene).catch(() => {});
+          const character = gltf.scene;
 
-              try {
-                character.traverse((child: THREE.Object3D) => {
-                  if (child instanceof THREE.Mesh) {
-                    const mesh = child;
+          // Resolve immediately so rendering can continue even if optional
+          // styling logic fails on specific meshes.
+          resolve(gltf);
 
-                    // Change clothing colors to match site theme
-                    if (mesh.material) {
-                      if (mesh.name === "BODY.SHIRT") {
-                        const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
-                        newMat.color = new THREE.Color("#8B4513");
-                        mesh.material = newMat;
-                      } else if (mesh.name === "Pant") {
-                        const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
-                        newMat.color = new THREE.Color("#000000");
-                        mesh.material = newMat;
-                      }
-                    }
+          // Do not block initial UX on shader precompile.
+          // Compile in background to reduce first-load waiting time.
+          renderer.compileAsync(character, camera, scene).catch(() => {});
 
-                    if (looksLikeCapMesh(mesh.name)) {
-                      const hasDecal = mesh.children.some((c) => c.name === "cap_logo_decal");
-                      if (!hasDecal) {
-                        addCapFrontLogoDecal(mesh);
-                      }
-                    }
+          try {
+            character.traverse((child: THREE.Object3D) => {
+              if (child instanceof THREE.Mesh) {
+                const mesh = child;
 
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    mesh.frustumCulled = true;
+                // Change clothing colors to match site theme
+                if (mesh.material) {
+                  if (mesh.name === "BODY.SHIRT") {
+                    const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
+                    newMat.color = new THREE.Color("#8B4513");
+                    mesh.material = newMat;
+                  } else if (mesh.name === "Pant") {
+                    const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
+                    newMat.color = new THREE.Color("#000000");
+                    mesh.material = newMat;
                   }
-                });
+                }
 
-                setCharTimeline(character, camera);
-                setAllTimeline();
-                const footR = character.getObjectByName("footR");
-                const footL = character.getObjectByName("footL");
-                if (footR) footR.position.y = 3.36;
-                if (footL) footL.position.y = 3.36;
-              } catch (styleError) {
-                console.warn("Character loaded, but optional styling failed:", styleError);
+                // Temporarily disable cap logo decal until model loading is stable.
+
+                child.castShadow = true;
+                child.receiveShadow = true;
+                mesh.frustumCulled = true;
               }
+            });
 
-              // Monitor scale is handled by GsapScroll.ts animations
+            setCharTimeline(character, camera);
+            setAllTimeline();
+            const footR = character.getObjectByName("footR");
+            const footL = character.getObjectByName("footL");
+            if (footR) footR.position.y = 3.36;
+            if (footL) footL.position.y = 3.36;
+          } catch (styleError) {
+            console.warn("Character loaded, but optional styling failed:", styleError);
+          }
 
-              dracoLoader.dispose();
-            },
-            undefined,
-            (error) => {
-              console.error("Error loading GLTF model:", error);
-              reject(error);
-            }
-          );
+          // Monitor scale is handled by GsapScroll.ts animations
+
+          dracoLoader.dispose();
         } catch (err) {
           reject(err);
           console.error(err);
