@@ -104,13 +104,13 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
                 <div className="what-content-in">
                   <h3>{item.title}</h3>
                   <h4>{item.subtitle}</h4>
-                  <p>{item.description}</p>
                   <h5>Skillset & tools</h5>
                   <div className="what-content-flex">
                     {tagsList.map((tag: string) => (
                       <div key={tag} className="what-tags">{tag}</div>
                     ))}
                   </div>
+                  <p>{item.description}</p>
                   <div className="what-arrow"></div>
                 </div>
               </div>
