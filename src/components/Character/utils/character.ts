@@ -10,6 +10,80 @@ const CHARACTER_MODEL_PATHS = [
   "/models/character.enc?v=2",
   "/models/character.enc",
 ];
+const CAP_LOGO_TEXTURE_PATH = "/images/mhb_logo.svg";
+const CAP_NAME_HINTS = ["cap", "hat", "helmet"];
+
+const capLogoTexture = new THREE.TextureLoader().load(CAP_LOGO_TEXTURE_PATH);
+capLogoTexture.colorSpace = THREE.SRGBColorSpace;
+capLogoTexture.flipY = false;
+
+const addCapLogoDecal = (capMesh: THREE.Mesh) => {
+  const hasDecal = capMesh.children.some((c) => c.name === "cap_logo_decal");
+  if (hasDecal) return;
+
+  capMesh.geometry.computeBoundingBox();
+  const bbox = capMesh.geometry.boundingBox;
+  if (!bbox) return;
+
+  const width = bbox.max.x - bbox.min.x;
+  const height = bbox.max.y - bbox.min.y;
+  if (width <= 0 || height <= 0) return;
+
+  const decalGeometry = new THREE.PlaneGeometry(width * 0.2, height * 0.11);
+  const decalMaterial = new THREE.MeshBasicMaterial({
+    map: capLogoTexture,
+    transparent: true,
+    alphaTest: 0.05,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const decal = new THREE.Mesh(decalGeometry, decalMaterial);
+  decal.name = "cap_logo_decal";
+  decal.renderOrder = 20;
+  decal.position.set(
+    (bbox.min.x + bbox.max.x) * 0.5,
+    bbox.min.y + height * 0.55,
+    bbox.max.z + 0.02
+  );
+  decal.rotation.x = -0.12;
+  capMesh.add(decal);
+};
+
+const findCapMesh = (character: THREE.Object3D, meshes: THREE.Mesh[]) => {
+  if (!meshes.length) return null;
+
+  const namedCap = meshes.find((mesh) => {
+    const lower = mesh.name.toLowerCase();
+    return CAP_NAME_HINTS.some((hint) => lower.includes(hint));
+  });
+  if (namedCap) return namedCap;
+
+  const characterBounds = new THREE.Box3().setFromObject(character);
+  const midY = (characterBounds.min.y + characterBounds.max.y) * 0.5;
+
+  let bestMesh: THREE.Mesh | null = null;
+  let bestScore = -Infinity;
+
+  for (const mesh of meshes) {
+    const bounds = new THREE.Box3().setFromObject(mesh);
+    const width = bounds.max.x - bounds.min.x;
+    const height = bounds.max.y - bounds.min.y;
+    const depth = bounds.max.z - bounds.min.z;
+
+    // Prefer large, upper-head meshes likely to be the cap shell.
+    const isUpper = bounds.max.y > midY;
+    if (!isUpper || width < 0.3 || height < 0.2) continue;
+
+    const score = bounds.max.y * 2 + width + depth;
+    if (score > bestScore) {
+      bestScore = score;
+      bestMesh = mesh;
+    }
+  }
+
+  return bestMesh;
+};
 
 const isValidGlbBuffer = (buffer: ArrayBuffer): boolean => {
   if (buffer.byteLength < 12) return false;
@@ -98,9 +172,11 @@ const setCharacter = (
           renderer.compileAsync(character, camera, scene).catch(() => {});
 
           try {
+            const meshes: THREE.Mesh[] = [];
             character.traverse((child: THREE.Object3D) => {
               if (child instanceof THREE.Mesh) {
                 const mesh = child;
+                meshes.push(mesh);
 
                 // Change clothing colors to match site theme
                 if (mesh.material) {
@@ -115,13 +191,16 @@ const setCharacter = (
                   }
                 }
 
-                // Temporarily disable cap logo decal until model loading is stable.
-
                 child.castShadow = true;
                 child.receiveShadow = true;
                 mesh.frustumCulled = true;
               }
             });
+
+            const capMesh = findCapMesh(character, meshes);
+            if (capMesh) {
+              addCapLogoDecal(capMesh);
+            }
 
             setCharTimeline(character, camera);
             setAllTimeline();
