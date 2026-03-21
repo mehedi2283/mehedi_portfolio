@@ -29,7 +29,7 @@ const withCapLogo = (material: THREE.Material): THREE.Material => {
   logoTexture.needsUpdate = true;
 
   logoMaterial.emissiveMap = logoTexture;
-  logoMaterial.emissive = new THREE.Color("#ffffff");
+  logoMaterial.emissive = new THREE.Color("#da2020");
   logoMaterial.emissiveIntensity = 0.9;
   logoMaterial.needsUpdate = true;
   return logoMaterial;
