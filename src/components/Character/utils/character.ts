@@ -4,8 +4,20 @@ import { setCharTimeline, setAllTimeline } from "../../utils/GsapScroll";
 import { decryptFile } from "./decrypt";
 
 const CHARACTER_MODEL_VERSION = 3;
-const CHARACTER_MODEL_PASSWORD = "Character3D#@";
+const CHARACTER_MODEL_PASSWORDS = ["Character3D#@", "MyCharacter12"];
 const CHARACTER_MODEL_PATH = `/models/character.enc?v=${CHARACTER_MODEL_VERSION}`;
+
+const decryptCharacterModel = async (url: string): Promise<ArrayBuffer> => {
+  let lastError: unknown;
+  for (const password of CHARACTER_MODEL_PASSWORDS) {
+    try {
+      return await decryptFile(url, password);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+};
 
 const setCharacter = (
   renderer: THREE.WebGLRenderer,
@@ -21,10 +33,7 @@ const setCharacter = (
     return new Promise<GLTF | null>((resolve, reject) => {
       (async () => {
         try {
-          const encryptedBlob = await decryptFile(
-            CHARACTER_MODEL_PATH,
-            CHARACTER_MODEL_PASSWORD
-          );
+          const encryptedBlob = await decryptCharacterModel(CHARACTER_MODEL_PATH);
           const blobUrl = URL.createObjectURL(new Blob([encryptedBlob]));
 
           let character: THREE.Object3D;
