@@ -105,44 +105,54 @@ const setCharacter = (
             async (gltf) => {
               character = gltf.scene;
 
+              // Resolve immediately so rendering can continue even if optional
+              // styling/decal logic fails on specific meshes.
+              resolve(gltf);
+
               // Do not block initial UX on shader precompile.
               // Compile in background to reduce first-load waiting time.
               renderer.compileAsync(character, camera, scene).catch(() => {});
 
-              character.traverse((child: THREE.Object3D) => {
-                if (child instanceof THREE.Mesh) {
-                  const mesh = child;
+              try {
+                character.traverse((child: THREE.Object3D) => {
+                  if (child instanceof THREE.Mesh) {
+                    const mesh = child;
 
-                  // Change clothing colors to match site theme
-                  if (mesh.material) {
-                    if (mesh.name === "BODY.SHIRT") { // The shirt mesh
-                      const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
-                      newMat.color = new THREE.Color("#8B4513");
-                      mesh.material = newMat;
-                    } else if (mesh.name === "Pant") {
-                      const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
-                      newMat.color = new THREE.Color("#000000");
-                      mesh.material = newMat;
+                    // Change clothing colors to match site theme
+                    if (mesh.material) {
+                      if (mesh.name === "BODY.SHIRT") {
+                        const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
+                        newMat.color = new THREE.Color("#8B4513");
+                        mesh.material = newMat;
+                      } else if (mesh.name === "Pant") {
+                        const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
+                        newMat.color = new THREE.Color("#000000");
+                        mesh.material = newMat;
+                      }
                     }
-                  }
 
-                  if (looksLikeCapMesh(mesh.name)) {
-                    const hasDecal = mesh.children.some((c) => c.name === "cap_logo_decal");
-                    if (!hasDecal) {
-                      addCapFrontLogoDecal(mesh);
+                    if (looksLikeCapMesh(mesh.name)) {
+                      const hasDecal = mesh.children.some((c) => c.name === "cap_logo_decal");
+                      if (!hasDecal) {
+                        addCapFrontLogoDecal(mesh);
+                      }
                     }
-                  }
 
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                  mesh.frustumCulled = true;
-                }
-              });
-              resolve(gltf);
-              setCharTimeline(character, camera);
-              setAllTimeline();
-              character!.getObjectByName("footR")!.position.y = 3.36;
-              character!.getObjectByName("footL")!.position.y = 3.36;
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    mesh.frustumCulled = true;
+                  }
+                });
+
+                setCharTimeline(character, camera);
+                setAllTimeline();
+                const footR = character.getObjectByName("footR");
+                const footL = character.getObjectByName("footL");
+                if (footR) footR.position.y = 3.36;
+                if (footL) footL.position.y = 3.36;
+              } catch (styleError) {
+                console.warn("Character loaded, but optional styling failed:", styleError);
+              }
 
               // Monitor scale is handled by GsapScroll.ts animations
 
