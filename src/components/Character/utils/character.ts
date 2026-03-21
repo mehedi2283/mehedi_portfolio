@@ -6,6 +6,25 @@ import { decryptFile } from "./decrypt";
 const CHARACTER_MODEL_VERSION = 3;
 const CHARACTER_MODEL_PASSWORDS = ["Character3D#@", "MyCharacter12"];
 const CHARACTER_MODEL_PATH = `/models/character.enc?v=${CHARACTER_MODEL_VERSION}`;
+const CAP_LOGO_TEXTURE_PATH = "/images/mhb_logo.svg";
+const CAP_NAME_HINTS = ["cap", "hat"];
+
+const capLogoTexture = new THREE.TextureLoader().load(CAP_LOGO_TEXTURE_PATH);
+capLogoTexture.colorSpace = THREE.SRGBColorSpace;
+
+const looksLikeCapMesh = (name: string) => {
+  const lower = name.toLowerCase();
+  return CAP_NAME_HINTS.some((hint) => lower.includes(hint));
+};
+
+const withCapLogo = (material: THREE.Material): THREE.Material => {
+  const logoMaterial = material.clone() as THREE.MeshStandardMaterial;
+  logoMaterial.emissiveMap = capLogoTexture;
+  logoMaterial.emissive = new THREE.Color("#ffffff");
+  logoMaterial.emissiveIntensity = 0.9;
+  logoMaterial.needsUpdate = true;
+  return logoMaterial;
+};
 
 const decryptCharacterModel = async (url: string): Promise<ArrayBuffer> => {
   let lastError: unknown;
@@ -60,6 +79,14 @@ const setCharacter = (
                       const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
                       newMat.color = new THREE.Color("#000000");
                       mesh.material = newMat;
+                    }
+                  }
+
+                  if (looksLikeCapMesh(mesh.name)) {
+                    if (Array.isArray(mesh.material)) {
+                      mesh.material = mesh.material.map((m) => withCapLogo(m));
+                    } else {
+                      mesh.material = withCapLogo(mesh.material);
                     }
                   }
 
