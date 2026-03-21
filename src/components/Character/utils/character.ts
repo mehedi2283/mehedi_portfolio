@@ -17,13 +17,35 @@ const looksLikeCapMesh = (name: string) => {
   return CAP_NAME_HINTS.some((hint) => lower.includes(hint));
 };
 
-const withCapLogo = (material: THREE.Material): THREE.Material => {
-  const logoMaterial = material.clone() as THREE.MeshStandardMaterial;
-  logoMaterial.emissiveMap = capLogoTexture;
-  logoMaterial.emissive = new THREE.Color("#ffffff");
-  logoMaterial.emissiveIntensity = 0.9;
-  logoMaterial.needsUpdate = true;
-  return logoMaterial;
+const addCapFrontLogoDecal = (capMesh: THREE.Mesh) => {
+  capMesh.geometry.computeBoundingBox();
+  const bbox = capMesh.geometry.boundingBox;
+  if (!bbox) return;
+
+  const width = bbox.max.x - bbox.min.x;
+  const height = bbox.max.y - bbox.min.y;
+
+  // Small logo decal near the front-center of the cap.
+  const decalWidth = width * 0.22;
+  const decalHeight = height * 0.12;
+  const decalGeometry = new THREE.PlaneGeometry(decalWidth, decalHeight);
+  const decalMaterial = new THREE.MeshBasicMaterial({
+    map: capLogoTexture,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const decal = new THREE.Mesh(decalGeometry, decalMaterial);
+  decal.name = "cap_logo_decal";
+  decal.renderOrder = 10;
+
+  const centerX = (bbox.min.x + bbox.max.x) * 0.5;
+  const centerY = bbox.min.y + height * 0.55;
+  const frontZ = bbox.max.z + 0.003;
+
+  decal.position.set(centerX, centerY, frontZ);
+  capMesh.add(decal);
 };
 
 const decryptCharacterModel = async (url: string): Promise<ArrayBuffer> => {
@@ -83,10 +105,9 @@ const setCharacter = (
                   }
 
                   if (looksLikeCapMesh(mesh.name)) {
-                    if (Array.isArray(mesh.material)) {
-                      mesh.material = mesh.material.map((m) => withCapLogo(m));
-                    } else {
-                      mesh.material = withCapLogo(mesh.material);
+                    const hasDecal = mesh.children.some((c) => c.name === "cap_logo_decal");
+                    if (!hasDecal) {
+                      addCapFrontLogoDecal(mesh);
                     }
                   }
 
