@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
+import { DecalGeometry, DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
 import { setCharTimeline, setAllTimeline } from "../../utils/GsapScroll";
 import { decryptFile } from "./decrypt";
 
@@ -29,25 +29,37 @@ const addCapLogoDecal = (capMesh: THREE.Mesh) => {
   const height = bbox.max.y - bbox.min.y;
   if (width <= 0 || height <= 0) return;
 
-  const decalGeometry = new THREE.PlaneGeometry(width * 0.2, height * 0.11);
-  const decalMaterial = new THREE.MeshBasicMaterial({
+  const worldPos = new THREE.Vector3(
+    (bbox.min.x + bbox.max.x) * 0.5,
+    bbox.min.y + height * 0.53,
+    bbox.max.z + 0.001
+  );
+  capMesh.localToWorld(worldPos);
+
+  const worldQuat = new THREE.Quaternion();
+  capMesh.getWorldQuaternion(worldQuat);
+  const orientation = new THREE.Euler().setFromQuaternion(worldQuat);
+
+  // Project slightly into cap front surface so logo looks printed, not floating.
+  const size = new THREE.Vector3(width * 0.21, height * 0.12, Math.max(width, height) * 0.25);
+  const decalGeometry = new DecalGeometry(capMesh, worldPos, orientation, size);
+
+  const decalMaterial = new THREE.MeshStandardMaterial({
     map: capLogoTexture,
     transparent: true,
     alphaTest: 0.05,
     depthWrite: false,
-    side: THREE.DoubleSide,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    roughness: 0.85,
+    metalness: 0,
   });
 
   const decal = new THREE.Mesh(decalGeometry, decalMaterial);
   decal.name = "cap_logo_decal";
   decal.renderOrder = 20;
-  decal.position.set(
-    (bbox.min.x + bbox.max.x) * 0.5,
-    bbox.min.y + height * 0.55,
-    bbox.max.z + 0.02
-  );
-  decal.rotation.x = -0.12;
-  capMesh.add(decal);
+  decal.frustumCulled = false;
+  capMesh.parent?.add(decal);
 };
 
 const findCapMesh = (character: THREE.Object3D, meshes: THREE.Mesh[]) => {
