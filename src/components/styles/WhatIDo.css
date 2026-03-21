@@ -72,16 +72,23 @@
   line-height: 18px;
   font-weight: 200;
   letter-spacing: 0.7px;
+  margin: 0;
   opacity: 0;
   max-height: 0;
   overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease;
 }
 
-.what-noTouch:hover .what-content p,
-.what-content-active .what-content p {
+.what-noTouch:hover p,
+.what-content-active p {
   opacity: 1;
   max-height: 220px;
+  margin: 8px 0 12px;
+}
+
+.what-content h5,
+.what-content .what-content-flex {
+  opacity: 1;
 }
 .what-content h4 {
   font-weight: 300;
