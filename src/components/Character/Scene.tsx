@@ -52,8 +52,12 @@ const Scene = () => {
       const light = setLighting(scene);
       const progress = setProgress((value) => setLoading(value));
       const { loadCharacter } = setCharacter(renderer, scene, camera);
+      const forceFinishLoadingTimeout = window.setTimeout(() => {
+        progress.clear();
+      }, 12000);
 
       loadCharacter().then((gltf) => {
+        window.clearTimeout(forceFinishLoadingTimeout);
         if (gltf) {
           const animations = setAnimations(gltf);
           if (hoverDivRef.current) {
@@ -75,6 +79,9 @@ const Scene = () => {
             handleResize(renderer, camera, canvasDiv, character)
           );
         }
+      }).catch(() => {
+        window.clearTimeout(forceFinishLoadingTimeout);
+        progress.clear();
       });
 
       let mouse = { x: 0, y: 0 },
@@ -131,6 +138,7 @@ const Scene = () => {
       };
       animate();
       return () => {
+        window.clearTimeout(forceFinishLoadingTimeout);
         clearTimeout(debounce);
         scene.clear();
         renderer.dispose();
