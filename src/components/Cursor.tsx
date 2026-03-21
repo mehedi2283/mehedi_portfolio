@@ -9,7 +9,22 @@ const Cursor = () => {
     const cursor = cursorRef.current!;
     const mousePos = { x: 0, y: 0 };
     const cursorPos = { x: 0, y: 0 };
+    let iconRailElement: HTMLElement | null = null;
     let rafId = 0;
+
+    const syncIconRailPosition = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect();
+      const style = window.getComputedStyle(element);
+      const paddingTop = parseFloat(style.paddingTop) || 0;
+      const paddingBottom = parseFloat(style.paddingBottom) || 0;
+      const railHeight = Math.max(0, rect.height - paddingTop - paddingBottom);
+
+      cursor.style.setProperty("--cursorH", `${railHeight}px`);
+      gsap.set(cursor, {
+        x: rect.left + rect.width / 2,
+        y: rect.top + paddingTop + cursor.getBoundingClientRect().width / 2,
+      });
+    };
 
     const mouseMoveHandler = (e: MouseEvent) => {
       mousePos.x = e.clientX;
@@ -17,7 +32,9 @@ const Cursor = () => {
     };
 
     const loop = () => {
-      if (!hover) {
+      if (iconRailElement) {
+        syncIconRailPosition(iconRailElement);
+      } else if (!hover) {
         const delay = 6;
         cursorPos.x += (mousePos.x - cursorPos.x) / delay;
         cursorPos.y += (mousePos.y - cursorPos.y) / delay;
@@ -33,14 +50,11 @@ const Cursor = () => {
       const element = target.closest("[data-cursor]") as HTMLElement | null;
       if (!element) return;
 
-      const rect = element.getBoundingClientRect();
-
       if (element.dataset.cursor === "icons") {
-        const entryY = Math.min(Math.max(e.clientY, rect.top + 10), rect.bottom - 10);
         cursor.classList.add("cursor-icons");
-        gsap.set(cursor, { x: rect.left, y: entryY - 10 });
-        gsap.to(cursor, { x: rect.left, y: rect.top, duration: 0.24, ease: "power2.out" });
-        cursor.style.setProperty("--cursorH", `${rect.height}px`);
+        iconRailElement = element;
+        // Lock cursor to rail position so entry point does not affect placement.
+        syncIconRailPosition(element);
         hover = true;
       }
 
@@ -58,6 +72,10 @@ const Cursor = () => {
 
       const related = e.relatedTarget as HTMLElement | null;
       if (related && element.contains(related)) return;
+
+      if (element.dataset.cursor === "icons") {
+        iconRailElement = null;
+      }
 
       cursor.classList.remove("cursor-disable", "cursor-icons");
       hover = false;

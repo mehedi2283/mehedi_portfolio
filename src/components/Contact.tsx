@@ -42,7 +42,14 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
           <div className="contact-box">
             <h4>Email</h4>
             <p>
-              <a href={`mailto:${data.email}`} data-cursor="disable">{data.email}</a>
+              <a href={`mailto:${data.email}`} data-cursor="disable" className="contact-email-link">
+                <span className="contact-email-text">
+                  <span className="contact-email-text-in">
+                    {data.email}
+                    <span aria-hidden="true">{data.email}</span>
+                  </span>
+                </span>
+              </a>
             </p>
             <h4>Education</h4>
             <p>{data.education}</p>

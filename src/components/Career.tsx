@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import "./styles/Career.css";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 interface CareerData {
   _id?: string;
@@ -29,6 +34,80 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
     fetchCareers();
   }, [previewData]);
 
+  useGSAP(() => {
+    if (careers.length === 0) return;
+
+    const careerBoxes = document.querySelectorAll(".career-info-box");
+    const timeline = document.querySelector(".career-timeline");
+
+    if (!careerBoxes.length || !timeline) return;
+
+    // On tablets/mobiles: animate on scroll without sticky pinning.
+    if (window.innerWidth <= 900) {
+      const mobileTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".career-info",
+          start: "top 85%",
+          end: "bottom 45%",
+          scrub: 0.65,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.set(careerBoxes, { opacity: 0, y: 18 });
+      gsap.set(timeline, { maxHeight: "0%" });
+
+      mobileTl.to(timeline, { maxHeight: "100%", duration: 1 }, 0);
+
+      careerBoxes.forEach((box, index) => {
+        mobileTl.to(
+          box,
+          { opacity: 1, y: 0, duration: 0.45 },
+          index * 0.24
+        );
+      });
+
+      return () => {
+        mobileTl.kill();
+      };
+    }
+
+    const scrollDistance = Math.max(780, careers.length * 430);
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".career-section",
+        start: "top top",
+        end: `+=${scrollDistance}`,
+        scrub: 0.55,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    gsap.set(careerBoxes, { opacity: 0, y: 28 });
+    gsap.set(timeline, { maxHeight: "0%" });
+
+    // Animate timeline growth
+    tl.to(timeline, { maxHeight: "100%", duration: 1.1 }, 0);
+
+    // Reveal items sequentially and keep them visible
+    careerBoxes.forEach((box, index) => {
+      tl.fromTo(
+        box,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.35 },
+        index * 0.36
+      );
+    });
+
+    return () => {
+      tl.kill();
+    };
+  }, [careers.length]);
+
   return (
     <div className="career-section section-container">
       <div className="career-container">
@@ -41,8 +120,8 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
             <div className="career-dot"></div>
           </div>
           
-          {careers.map((job) => (
-            <div className="career-info-box" key={job._id}>
+          {careers.map((job, index) => (
+            <div className="career-info-box" key={job._id ?? `${job.title}-${index}`}>
               <div className="career-info-in">
                 <div className="career-role">
                   <h4>{job.title}</h4>

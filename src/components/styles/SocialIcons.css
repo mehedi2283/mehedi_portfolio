@@ -9,8 +9,6 @@
 }
 
 .social-icons {
-  --social-purple: #e6c3ff;
-  --social-purple-shadow: rgba(175, 131, 255, 0.72);
   position: absolute;
   left: -20px;
   bottom: 20px;
@@ -22,10 +20,12 @@
   border-radius: 999px;
   isolation: isolate;
   align-items: center;
+  background-color: transparent;
+  box-shadow: none;
 }
 
 .social-icons a {
-  color: #f1ecff;
+  color: #5e5e5e;
   transition: color 0.22s ease, filter 0.22s ease, text-shadow 0.22s ease;
 }
 
@@ -36,6 +36,8 @@
 .social-link {
   --jx: 0px;
   --jy: 0px;
+  --jr: 0deg;
+  --js: 1;
   position: relative;
   z-index: 1;
   width: 50px;
@@ -44,10 +46,11 @@
   display: grid;
   place-items: center;
   font-size: 28px;
-  color: #f1ecff;
+  color: #5e5e5e;
   line-height: 1;
-  transform: translate3d(var(--jx), var(--jy), 0);
-  transition: color 0.22s ease, transform 0.18s ease, filter 0.22s ease,
+  transform: translate3d(var(--jx), var(--jy), 0) rotate(var(--jr)) scale(var(--js));
+  transform-origin: center;
+  transition: color 0.22s ease, transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.22s ease,
     text-shadow 0.22s ease;
 }
 

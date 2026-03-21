@@ -29,14 +29,18 @@ const SocialIcons = () => {
     const rect = el.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    el.style.setProperty("--jx", `${x * 8}px`);
-    el.style.setProperty("--jy", `${y * 8}px`);
+    el.style.setProperty("--jx", `${x * 14}px`);
+    el.style.setProperty("--jy", `${y * 14}px`);
+    el.style.setProperty("--jr", `${x * 10}deg`);
+    el.style.setProperty("--js", `${1 + Math.min(Math.abs(x) + Math.abs(y), 0.25) * 0.12}`);
   };
 
   const resetIconJiggle = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = e.currentTarget;
     el.style.setProperty("--jx", "0px");
     el.style.setProperty("--jy", "0px");
+    el.style.setProperty("--jr", "0deg");
+    el.style.setProperty("--js", "1");
   };
 
   useEffect(() => {
