@@ -5,7 +5,11 @@ import { decryptFile } from "./decrypt";
 
 const CHARACTER_MODEL_VERSION = 3;
 const CHARACTER_MODEL_PASSWORDS = ["Character3D#@", "MyCharacter12"];
-const CHARACTER_MODEL_PATH = `/models/character.enc?v=${CHARACTER_MODEL_VERSION}`;
+const CHARACTER_MODEL_PATHS = [
+  `/models/character.enc?v=${CHARACTER_MODEL_VERSION}`,
+  "/models/character.enc?v=2",
+  "/models/character.enc",
+];
 const CAP_LOGO_TEXTURE_PATH = "/images/mhb_logo.svg";
 const CAP_NAME_HINTS = ["cap", "hat"];
 
@@ -48,15 +52,33 @@ const addCapFrontLogoDecal = (capMesh: THREE.Mesh) => {
   capMesh.add(decal);
 };
 
-const decryptCharacterModel = async (url: string): Promise<ArrayBuffer> => {
-  let lastError: unknown;
-  for (const password of CHARACTER_MODEL_PASSWORDS) {
-    try {
-      return await decryptFile(url, password);
-    } catch (error) {
-      lastError = error;
+const isValidGlbBuffer = (buffer: ArrayBuffer): boolean => {
+  if (buffer.byteLength < 12) return false;
+  const header = new Uint8Array(buffer, 0, 4);
+  return (
+    header[0] === 0x67 && // g
+    header[1] === 0x6c && // l
+    header[2] === 0x54 && // T
+    header[3] === 0x46 // F
+  );
+};
+
+const decryptCharacterModel = async (): Promise<ArrayBuffer> => {
+  let lastError: unknown = new Error("Character model decryption failed");
+
+  for (const path of CHARACTER_MODEL_PATHS) {
+    for (const password of CHARACTER_MODEL_PASSWORDS) {
+      try {
+        const decrypted = await decryptFile(path, password);
+        if (isValidGlbBuffer(decrypted)) {
+          return decrypted;
+        }
+      } catch (error) {
+        lastError = error;
+      }
     }
   }
+
   throw lastError;
 };
 
@@ -74,7 +96,7 @@ const setCharacter = (
     return new Promise<GLTF | null>((resolve, reject) => {
       (async () => {
         try {
-          const encryptedBlob = await decryptCharacterModel(CHARACTER_MODEL_PATH);
+          const encryptedBlob = await decryptCharacterModel();
           const blobUrl = URL.createObjectURL(new Blob([encryptedBlob]));
 
           let character: THREE.Object3D;
