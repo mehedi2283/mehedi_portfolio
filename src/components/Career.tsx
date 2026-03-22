@@ -42,14 +42,14 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
 
     if (!careerBoxes.length || !timeline) return;
 
-    // On tablets/mobiles: run a one-time enter animation for reliable triggering.
+    // On tablets/mobiles: use a scrubbed timeline so visibility is tied to scroll position.
     if (window.innerWidth <= 900) {
       const mobileTl = gsap.timeline({
         scrollTrigger: {
           trigger: ".career-section",
-          start: "top 82%",
-          toggleActions: "play none none none",
-          once: true,
+          start: "top 30%",
+          end: "bottom center",
+          scrub: true,
           invalidateOnRefresh: true,
         },
       });
@@ -58,11 +58,11 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
       gsap.set(timeline, { maxHeight: "0%" });
 
       mobileTl
-        .to(timeline, { maxHeight: "100%", duration: 0.7, ease: "power2.out" }, 0)
+        .to(timeline, { maxHeight: "100%", duration: 0.8, ease: "none" }, 0)
         .to(
           careerBoxes,
-          { opacity: 1, y: 0, duration: 0.42, stagger: 0.16, ease: "power2.out" },
-          0.08
+          { opacity: 1, y: 0, duration: 0.45, stagger: 0.18, ease: "none" },
+          0
         );
 
       return () => {
