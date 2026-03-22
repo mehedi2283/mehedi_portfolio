@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
 
 :root {
-  font-family: "Geist", sans-serif;
+  font-family: ClashDisplay, sans-serif;
 
   font-optical-sizing: auto;
   font-style: normal;
@@ -30,7 +30,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Geist", sans-serif;
+  font-family: ClashDisplay, sans-serif;
 }
 
 body {

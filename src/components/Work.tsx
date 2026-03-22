@@ -1,7 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./styles/Work.css";
 import WorkImage from "./WorkImage";
-import { MdArrowBack, MdArrowForward } from "react-icons/md";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import axios from "axios";
 
 interface Project {
@@ -10,15 +12,17 @@ interface Project {
   category: string;
   tools: string;
   image: string;
+  link?: string;
+  video?: string;
   order: number;
 }
 
-
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const Work = ({ previewData }: { previewData?: Project[] }) => {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const workFlexRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (previewData) {
@@ -30,103 +34,87 @@ const Work = ({ previewData }: { previewData?: Project[] }) => {
       .catch(() => setProjects([]));
   }, [previewData]);
 
-  const goToSlide = useCallback(
-    (index: number) => {
-      if (isAnimating) return;
-      setIsAnimating(true);
-      setCurrentIndex(index);
-      setTimeout(() => setIsAnimating(false), 500);
-    },
-    [isAnimating]
+  const sortedProjects = useMemo(
+    () => [...projects].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    [projects]
   );
 
-  const goToPrev = useCallback(() => {
-    const newIndex =
-      currentIndex === 0 ? projects.length - 1 : currentIndex - 1;
-    goToSlide(newIndex);
-  }, [currentIndex, goToSlide, projects.length]);
+  useGSAP(
+    () => {
+      if (window.innerWidth <= 1025) return;
+      if (sortedProjects.length === 0) return;
+      if (!sectionRef.current || !workFlexRef.current) return;
 
-  const goToNext = useCallback(() => {
-    const newIndex =
-      currentIndex === projects.length - 1 ? 0 : currentIndex + 1;
-    goToSlide(newIndex);
-  }, [currentIndex, goToSlide, projects.length]);
+      const box = sectionRef.current.getElementsByClassName("work-box");
+      const container = sectionRef.current.querySelector(".work-container");
+      if (!box.length || !container) return;
+
+      const calcTranslateX = () => {
+        const rectLeft = container.getBoundingClientRect().left;
+        const rect = (box[0] as HTMLElement).getBoundingClientRect();
+        const parentWidth = (box[0].parentElement as HTMLElement).getBoundingClientRect().width;
+        const padding = parseInt(window.getComputedStyle(box[0] as Element).padding, 10) / 2;
+        return Math.max(0, rect.width * box.length - (rectLeft + parentWidth) + padding);
+      };
+
+      const translateX = calcTranslateX();
+      if (translateX <= 0) return;
+
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: `+=${translateX}`,
+          scrub: true,
+          pin: true,
+          id: "work",
+          invalidateOnRefresh: true,
+        },
+      });
+
+      timeline.to(workFlexRef.current, {
+        x: -translateX,
+        ease: "none",
+      });
+
+      return () => {
+        timeline.kill();
+        ScrollTrigger.getById("work")?.kill();
+      };
+    },
+    { dependencies: [sortedProjects.length], scope: sectionRef }
+  );
 
 
   return (
-    <div className="work-section" id="work">
+    <div className="work-section" id="work" ref={sectionRef}>
       <div className="work-container section-container">
         <h2>
           My <span>Work</span>
         </h2>
+        <div className="work-flex" ref={workFlexRef}>
+          {sortedProjects.map((project, index) => (
+            <div className="work-box" key={project._id ?? `${project.title}-${index}`}>
+              <div className="work-info">
+                <div className="work-title">
+                  <h3>{String(index + 1).padStart(2, "0")}</h3>
 
-        <div className="carousel-wrapper">
-          {/* Navigation Arrows */}
-          <button
-            className="carousel-arrow carousel-arrow-left"
-            onClick={goToPrev}
-            aria-label="Previous project"
-            data-cursor="disable"
-          >
-            <MdArrowBack />
-          </button>
-          <button
-            className="carousel-arrow carousel-arrow-right"
-            onClick={goToNext}
-            aria-label="Next project"
-            data-cursor="disable"
-          >
-            <MdArrowForward />
-          </button>
-
-          {/* Slides */}
-          <div className="carousel-track-container">
-            <div
-              className="carousel-track"
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-              {projects.map((project, index) => (
-                <div className="carousel-slide" key={index}>
-                  <div className="carousel-content">
-                    <div className="carousel-info">
-                      <div className="carousel-number">
-                        <h3>0{index + 1}</h3>
-                      </div>
-                      <div className="carousel-details">
-                        <h4>{project.title}</h4>
-                        <p className="carousel-category">
-                          {project.category}
-                        </p>
-                        <div className="carousel-tools">
-                          <span className="tools-label">Tools & Features</span>
-                          <p>{project.tools}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="carousel-image-wrapper">
-                      <WorkImage image={project.image} alt={project.title} />
-                    </div>
+                  <div>
+                    <h4>{project.title}</h4>
+                    <p>{project.category}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Dot Indicators */}
-          <div className="carousel-dots">
-            {projects.map((_, index) => (
-              <button
-                key={index}
-                className={`carousel-dot ${index === currentIndex ? "carousel-dot-active" : ""
-                  }`}
-                onClick={() => goToSlide(index)}
-                aria-label={`Go to project ${index + 1}`}
-                data-cursor="disable"
+                <h4>Tools and features</h4>
+                <p>{project.tools}</p>
+              </div>
+              <WorkImage
+                image={project.image}
+                alt={project.title}
+                link={project.link}
+                video={project.video}
               />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

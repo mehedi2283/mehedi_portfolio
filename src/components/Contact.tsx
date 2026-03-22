@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { MdCopyright } from "react-icons/md";
+import { MdArrowOutward, MdCopyright } from "react-icons/md";
 import "./styles/Contact.css";
 
 interface ContactData {
   email: string;
   education: string;
+  location?: string;
   github: string;
   linkedin: string;
   twitter: string;
@@ -15,6 +16,7 @@ interface ContactData {
 const FALLBACK: ContactData = {
   email: "mehedihasan123456789.mh.mh@gmail.com",
   education: "BSc in Computer Science and Engineering",
+  location: "Dhaka, Bangladesh",
   github: "https://github.com/mh-mehedihasan",
   linkedin: "https://www.linkedin.com/in/mehedihasan",
   twitter: "https://x.com/mehedihasan",
@@ -42,17 +44,25 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
           <div className="contact-box">
             <h4>Email</h4>
             <p>
-              <a href={`mailto:${data.email}`} data-cursor="disable" className="contact-email-link">
-                <span className="contact-email-text">
-                  <span className="contact-email-text-in">
-                    {data.email}
-                    <span aria-hidden="true">{data.email}</span>
-                  </span>
-                </span>
-              </a>
+              <a href={`mailto:${data.email}`} data-cursor="disable">{data.email}</a>
             </p>
-            <h4>Education</h4>
-            <p>{data.education}</p>
+            <h4>Location</h4>
+            <p>{data.location || data.education}</p>
+          </div>
+          <div className="contact-box contact-social-col">
+            <h4>Social</h4>
+            <a href={data.github} target="_blank" rel="noreferrer" data-cursor="disable" className="contact-social">
+              Github <MdArrowOutward />
+            </a>
+            <a href={data.linkedin} target="_blank" rel="noreferrer" data-cursor="disable" className="contact-social">
+              Linkedin <MdArrowOutward />
+            </a>
+            <a href={data.twitter} target="_blank" rel="noreferrer" data-cursor="disable" className="contact-social">
+              Twitter <MdArrowOutward />
+            </a>
+            <a href={data.instagram} target="_blank" rel="noreferrer" data-cursor="disable" className="contact-social">
+              Instagram <MdArrowOutward />
+            </a>
           </div>
           <div className="contact-box">
             <h2>
@@ -61,9 +71,7 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
             <h5>
               <MdCopyright /> 2026
               <span className="contact-sep">|</span>
-              <a href="/admin" className="contact-admin-link" data-cursor="disable">
-                Admin
-              </a>
+              <a href="/admin" className="contact-admin-link" data-cursor="disable">Admin</a>
             </h5>
           </div>
         </div>

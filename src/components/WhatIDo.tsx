@@ -19,6 +19,7 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
   const setRef = (el: HTMLDivElement | null, index: number) => {
     containerRef.current[index] = el;
   };
+
   useEffect(() => {
     if (previewData) {
       setServices(previewData);
@@ -28,6 +29,32 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
       .then(res => setServices(res.data))
       .catch(() => {});
   }, [previewData]);
+
+  useEffect(() => {
+    if (window.innerWidth <= 1024) return;
+
+    const showWhatBox = () => {
+      const whatBox = document.querySelector(".what-box-in") as HTMLElement | null;
+      if (whatBox) {
+        whatBox.style.display = "flex";
+      }
+    };
+
+    const trigger = ScrollTrigger.create({
+      trigger: ".whatIDO",
+      start: "top 82%",
+      onEnter: showWhatBox,
+      onEnterBack: showWhatBox,
+    });
+
+    // Fallback in case the character timeline does not run on larger devices.
+    const fallbackTimer = window.setTimeout(showWhatBox, 1200);
+
+    return () => {
+      trigger.kill();
+      window.clearTimeout(fallbackTimer);
+    };
+  }, [services.length]);
 
   useEffect(() => {
     if (ScrollTrigger.isTouch) {
@@ -46,6 +73,7 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
       });
     };
   }, [services]);
+
   return (
     <div className="whatIDO">
       <div className="what-box">
@@ -57,7 +85,7 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
         </h2>
       </div>
       <div className="what-box">
-        <div className={`what-box-in ${services.length > 2 ? "what-many" : ""}`}>
+        <div className="what-box-in">
           <div className="what-border2">
             <svg width="100%">
               <line
@@ -81,10 +109,10 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
             </svg>
           </div>
           {services.map((item: WhatIDoItem, index: number) => {
-            const tagsList = typeof item.tags === 'string' 
-              ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+            const tagsList = typeof item.tags === "string"
+              ? item.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
               : (item.tags || []);
-            
+
             return (
               <div
                 key={item._id || index}
@@ -104,13 +132,13 @@ const WhatIDo = ({ previewData }: { previewData?: WhatIDoItem[] }) => {
                 <div className="what-content-in">
                   <h3>{item.title}</h3>
                   <h4>{item.subtitle}</h4>
+                  <p>{item.description}</p>
                   <h5>Skillset & tools</h5>
                   <div className="what-content-flex">
                     {tagsList.map((tag: string) => (
                       <div key={tag} className="what-tags">{tag}</div>
                     ))}
                   </div>
-                  <p>{item.description}</p>
                   <div className="what-arrow"></div>
                 </div>
               </div>
