@@ -122,6 +122,22 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
 
   if (loading) return null;
 
+  if (isMobileView) {
+    return (
+      <div className="techstack techstack-mobile">
+        {!previewData && <h2> My Techstack</h2>}
+        <div className="techstack-mobile-grid">
+          {sortedItems.map((item) => (
+            <div key={item._id ?? item.name} className={`techstack-mobile-item ${item.highlighted ? "highlighted" : ""}`}>
+              <img src={item.imageUrl} alt={item.name} loading="lazy" decoding="async" />
+              <span>{item.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="techstack">
       {!previewData && <h2> My Techstack</h2>}

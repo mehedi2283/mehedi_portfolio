@@ -51,8 +51,8 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
 
     // On mobile: keep career section static and readable without scroll animation.
     if (isMobileView) {
-      gsap.set(careerBoxes, { opacity: 1, y: 0, clearProps: "all" });
-      gsap.set(timeline, { maxHeight: "100%", clearProps: "all" });
+      gsap.set(careerBoxes, { opacity: 1, y: 0, clearProps: "opacity,transform" });
+      gsap.set(timeline, { maxHeight: "100%" });
       return;
     }
 
