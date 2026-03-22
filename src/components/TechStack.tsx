@@ -21,13 +21,6 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
   const [techItems, setTechItems] = useState<TechItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [accentColor, setAccentColor] = useState("#5eead4");
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 900);
-
-  useEffect(() => {
-    const onResize = () => setIsMobileView(window.innerWidth <= 900);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
 
   useEffect(() => {
     axios
@@ -109,16 +102,15 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
 
   const spheres = useMemo(() => {
     if (entries.length === 0) return [];
-    const source = isMobileView ? entries.slice(0, 18) : entries;
-    return source.map(({ item, material, highlighted }) => ({
+    return entries.map(({ item, material, highlighted }) => ({
       scale: item.category === "automation" ? 1 : 0.65,
       material,
       highlighted,
     }));
-  }, [entries, isMobileView]);
+  }, [entries]);
 
-  const isLowQuality = isMobileView;
-  const enablePostFx = !isMobileView;
+  const isLowQuality = false;
+  const enablePostFx = true;
 
   if (loading) return null;
 
@@ -127,15 +119,15 @@ const TechStack = ({ previewData }: { previewData?: TechItem[] }) => {
       {!previewData && <h2> My Techstack</h2>}
 
       <Canvas
-        shadows={!isMobileView}
+        shadows
         gl={{
           alpha: true,
           stencil: false,
           depth: false,
-          antialias: !isMobileView,
+          antialias: true,
           powerPreference: "high-performance",
         }}
-        dpr={isMobileView ? [1, 1.25] : [1, 2]}
+        dpr={[1, 2]}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
         className="tech-canvas"

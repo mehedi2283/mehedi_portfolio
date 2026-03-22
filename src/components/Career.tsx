@@ -17,13 +17,6 @@ interface CareerData {
 
 const Career = ({ previewData }: { previewData?: CareerData[] }) => {
   const [careers, setCareers] = useState<CareerData[]>([]);
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 900);
-
-  useEffect(() => {
-    const onResize = () => setIsMobileView(window.innerWidth <= 900);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
 
   useEffect(() => {
     if (previewData) {
@@ -49,11 +42,45 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
 
     if (!careerBoxes.length || !timeline) return;
 
-    // On mobile: keep career section static and readable without scroll animation.
-    if (isMobileView) {
-      gsap.set(careerBoxes, { opacity: 1, y: 0, clearProps: "opacity,transform" });
-      gsap.set(timeline, { maxHeight: "100%" });
-      return;
+    // On tablets/mobiles: run a one-time enter animation for reliable triggering.
+    if (window.innerWidth <= 900) {
+      const mobileTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".career-section",
+          start: "top 82%",
+          toggleActions: "play none none none",
+          once: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.set(careerBoxes, { opacity: 0, y: 18 });
+      gsap.set(timeline, { maxHeight: "0%" });
+
+      mobileTl
+        .to(timeline, { maxHeight: "100%", duration: 0.7, ease: "power2.out" }, 0)
+        .to(
+          careerBoxes,
+          { opacity: 1, y: 0, duration: 0.42, stagger: 0.16, ease: "power2.out" },
+          0.08
+        );
+
+      // Safety fallback for touch devices where trigger timing can occasionally miss.
+      const mobileFallback = window.setTimeout(() => {
+        gsap.to(timeline, { maxHeight: "100%", duration: 0.45, overwrite: "auto" });
+        gsap.to(careerBoxes, {
+          opacity: 1,
+          y: 0,
+          duration: 0.35,
+          stagger: 0.1,
+          overwrite: "auto",
+        });
+      }, 1600);
+
+      return () => {
+        window.clearTimeout(mobileFallback);
+        mobileTl.kill();
+      };
     }
 
     const scrollDistance = Math.max(780, careers.length * 430);
@@ -90,7 +117,7 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
     return () => {
       tl.kill();
     };
-  }, [careers.length, isMobileView]);
+  }, [careers.length]);
 
   return (
     <div className="career-section section-container" id="career">

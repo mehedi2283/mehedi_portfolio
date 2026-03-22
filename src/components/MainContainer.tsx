@@ -82,7 +82,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
             <Career />
             <Work />
             <div ref={techStackTriggerRef} style={{ width: "100%", height: 1 }} />
-            {(!isDesktopView || shouldLoadTechStack) && (
+            {((isDesktopView && shouldLoadTechStack) || !isDesktopView) && (
               <Suspense fallback={<div>Loading....</div>}>
                 <TechStack />
               </Suspense>
