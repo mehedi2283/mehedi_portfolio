@@ -5,8 +5,7 @@ import "./styles/Contact.css";
 
 interface ContactData {
   email: string;
-  education: string;
-  location?: string;
+  location: string;
   github: string;
   linkedin: string;
   twitter: string;
@@ -15,7 +14,6 @@ interface ContactData {
 
 const FALLBACK: ContactData = {
   email: "mehedihasan123456789.mh.mh@gmail.com",
-  education: "BSc in Computer Science and Engineering",
   location: "Dhaka, Bangladesh",
   github: "https://github.com/mh-mehedihasan",
   linkedin: "https://www.linkedin.com/in/mehedihasan",
@@ -32,7 +30,16 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
       return;
     }
     axios.get('https://mehedi-portfolio-server-phi.vercel.app/api/contact')
-      .then(res => { if (res.data?.email) setData({ ...FALLBACK, ...res.data }); })
+      .then(res => {
+        if (res.data?.email) {
+          setData({
+            ...FALLBACK,
+            ...res.data,
+            // Legacy compatibility for old payloads that still use education.
+            location: res.data.location || res.data.education || FALLBACK.location,
+          });
+        }
+      })
       .catch(() => {});
   }, [previewData]);
 
@@ -44,10 +51,17 @@ const Contact = ({ previewData }: { previewData?: ContactData }) => {
           <div className="contact-box">
             <h4>Email</h4>
             <p>
-              <a href={`mailto:${data.email}`} data-cursor="disable">{data.email}</a>
+              <a href={`mailto:${data.email}`} data-cursor="disable" className="contact-email-link">
+                <span className="contact-email-text">
+                  <span className="contact-email-text-in">
+                    {data.email}
+                    <span aria-hidden="true">{data.email}</span>
+                  </span>
+                </span>
+              </a>
             </p>
             <h4>Location</h4>
-            <p>{data.location || data.education}</p>
+            <p>{data.location}</p>
           </div>
           <div className="contact-box contact-social-col">
             <h4>Social</h4>

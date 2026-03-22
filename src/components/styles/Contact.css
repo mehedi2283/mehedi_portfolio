@@ -32,6 +32,34 @@
   margin-bottom: 20px;
 }
 
+.contact-email-link {
+  display: inline-flex;
+}
+
+.contact-email-text {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  line-height: 1.15;
+}
+
+.contact-email-text-in {
+  position: relative;
+  display: inline-flex;
+  transition: transform 0.3s ease;
+}
+
+.contact-email-text-in > span {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: var(--accentColor);
+}
+
+.contact-email-link:hover .contact-email-text-in {
+  transform: translateY(-100%);
+}
+
 a.contact-social {
   font-size: 25px;
   border-bottom: 1px solid #ccc;

@@ -25,7 +25,7 @@ interface LandingData { firstName: string; lastName: string; role1: string; role
 type AboutCategory = 'headline' | 'body' | 'note';
 interface AboutBlock { category: AboutCategory; text: string; }
 interface AboutData   { bio: string; aboutBlocks: AboutBlock[]; }
-interface ContactData { email: string; education: string; github: string; linkedin: string; twitter: string; instagram: string; }
+interface ContactData { email: string; location: string; github: string; linkedin: string; twitter: string; instagram: string; }
 interface SecurityData { passkey1: string; passkey2: string; }
 
 async function processImage(file: File): Promise<Blob> {
@@ -1487,17 +1487,22 @@ function ContactPreview({ data }: { data: ContactData }) {
 }
 
 function ContactPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'error') => void }) {
-  const fallback: ContactData = { email: '', education: '', github: '', linkedin: '', twitter: '', instagram: '' };
+  const fallback: ContactData = { email: '', location: '', github: '', linkedin: '', twitter: '', instagram: '' };
   const { data, setData, refresh } = useSingle<ContactData>(`${API}/contact`, fallback);
+  const normalizedData = {
+    ...data,
+    // Legacy compatibility for previously saved contact records.
+    location: data.location || ((data as unknown as { education?: string }).education ?? ''),
+  } as ContactData;
   const [subTab, setSubTab] = useState<'manage'|'preview'>('manage');
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { await axios.put(`${API}/contact`, data); showToast('Contact info saved!'); refresh(); }
+    try { await axios.put(`${API}/contact`, normalizedData); showToast('Contact info saved!'); refresh(); }
     catch { showToast('Error', 'error'); }
   };
   return (
     <div className="panel">
-      <SectionHeader title="Contact Info" subtitle="Email, social links and education shown in the footer/contact section" />
+      <SectionHeader title="Contact Info" subtitle="Email, social links and location shown in the footer/contact section" />
       <div className="panel-tabs">
         <button type="button" className={`panel-tab ${subTab==='manage'?'active':''}`} onClick={()=>setSubTab('manage')}>Manage Data</button>
         <button type="button" className={`panel-tab ${subTab==='preview'?'active':''}`} onClick={()=>setSubTab('preview')}>Live Preview</button>
@@ -1506,12 +1511,12 @@ function ContactPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
         <>
       <form className="dash-form" style={{marginBottom: 24}}  onSubmit={submit}>
           <div className="form-grid">
-            <label>Email<input type="email" value={data.email} onChange={e => setData({...data, email: e.target.value})} required /></label>
-            <label>Education<input value={data.education} onChange={e => setData({...data, education: e.target.value})} /></label>
-            <label>GitHub URL<input value={data.github} onChange={e => setData({...data, github: e.target.value})} /></label>
-            <label>LinkedIn URL<input value={data.linkedin} onChange={e => setData({...data, linkedin: e.target.value})} /></label>
-            <label>Twitter URL<input value={data.twitter} onChange={e => setData({...data, twitter: e.target.value})} /></label>
-            <label>Instagram URL<input value={data.instagram} onChange={e => setData({...data, instagram: e.target.value})} /></label>
+            <label>Email<input type="email" value={normalizedData.email} onChange={e => setData({...normalizedData, email: e.target.value})} required /></label>
+            <label>Location<input value={normalizedData.location} onChange={e => setData({...normalizedData, location: e.target.value})} /></label>
+            <label>GitHub URL<input value={normalizedData.github} onChange={e => setData({...normalizedData, github: e.target.value})} /></label>
+            <label>LinkedIn URL<input value={normalizedData.linkedin} onChange={e => setData({...normalizedData, linkedin: e.target.value})} /></label>
+            <label>Twitter URL<input value={normalizedData.twitter} onChange={e => setData({...normalizedData, twitter: e.target.value})} /></label>
+            <label>Instagram URL<input value={normalizedData.instagram} onChange={e => setData({...normalizedData, instagram: e.target.value})} /></label>
           </div>
           <div className="form-actions"><button type="submit" className="btn-save">Save Contact</button></div>
         </form>
@@ -1520,7 +1525,7 @@ function ContactPanel({ showToast }: { showToast: (m: string, t?: 'success' | 'e
       )}
       {subTab === 'preview' && (
         <div className="preview-tab-content">
-          <ContactPreview data={data} />
+          <ContactPreview data={normalizedData} />
         </div>
       )}
     </div>
