@@ -17,6 +17,13 @@ interface CareerData {
 
 const Career = ({ previewData }: { previewData?: CareerData[] }) => {
   const [careers, setCareers] = useState<CareerData[]>([]);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 900);
+
+  useEffect(() => {
+    const onResize = () => setIsMobileView(window.innerWidth <= 900);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     if (previewData) {
@@ -42,32 +49,11 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
 
     if (!careerBoxes.length || !timeline) return;
 
-    // On tablets/mobiles: use a scrubbed timeline so visibility is tied to scroll position.
-    if (window.innerWidth <= 900) {
-      const mobileTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".career-section",
-          start: "top 30%",
-          end: "bottom center",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      gsap.set(careerBoxes, { opacity: 0, y: 18 });
-      gsap.set(timeline, { maxHeight: "0%" });
-
-      mobileTl
-        .to(timeline, { maxHeight: "100%", duration: 0.8, ease: "none" }, 0)
-        .to(
-          careerBoxes,
-          { opacity: 1, y: 0, duration: 0.45, stagger: 0.18, ease: "none" },
-          0
-        );
-
-      return () => {
-        mobileTl.kill();
-      };
+    // On mobile: keep career section static and readable without scroll animation.
+    if (isMobileView) {
+      gsap.set(careerBoxes, { opacity: 1, y: 0, clearProps: "all" });
+      gsap.set(timeline, { maxHeight: "100%", clearProps: "all" });
+      return;
     }
 
     const scrollDistance = Math.max(780, careers.length * 430);
@@ -104,7 +90,7 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
     return () => {
       tl.kill();
     };
-  }, [careers.length]);
+  }, [careers.length, isMobileView]);
 
   return (
     <div className="career-section section-container" id="career">
