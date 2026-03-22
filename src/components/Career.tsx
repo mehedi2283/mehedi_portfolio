@@ -42,14 +42,14 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
 
     if (!careerBoxes.length || !timeline) return;
 
-    // On tablets/mobiles: animate on scroll without sticky pinning.
+    // On tablets/mobiles: run a one-time enter animation for reliable triggering.
     if (window.innerWidth <= 900) {
       const mobileTl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".career-info",
-          start: "top 85%",
-          end: "bottom 45%",
-          scrub: 0.65,
+          trigger: ".career-section",
+          start: "top 82%",
+          toggleActions: "play none none none",
+          once: true,
           invalidateOnRefresh: true,
         },
       });
@@ -57,15 +57,13 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
       gsap.set(careerBoxes, { opacity: 0, y: 18 });
       gsap.set(timeline, { maxHeight: "0%" });
 
-      mobileTl.to(timeline, { maxHeight: "100%", duration: 1 }, 0);
-
-      careerBoxes.forEach((box, index) => {
-        mobileTl.to(
-          box,
-          { opacity: 1, y: 0, duration: 0.45 },
-          index * 0.24
+      mobileTl
+        .to(timeline, { maxHeight: "100%", duration: 0.7, ease: "power2.out" }, 0)
+        .to(
+          careerBoxes,
+          { opacity: 1, y: 0, duration: 0.42, stagger: 0.16, ease: "power2.out" },
+          0.08
         );
-      });
 
       return () => {
         mobileTl.kill();
@@ -109,7 +107,7 @@ const Career = ({ previewData }: { previewData?: CareerData[] }) => {
   }, [careers.length]);
 
   return (
-    <div className="career-section section-container">
+    <div className="career-section section-container" id="career">
       <div className="career-container">
         <h2>
           My career <span>&</span>
